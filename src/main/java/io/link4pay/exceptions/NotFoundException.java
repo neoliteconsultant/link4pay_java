@@ -1,0 +1,13 @@
+package io.link4pay.exceptions;
+
+public class NotFoundException extends Link4PayException {
+    private static final long serialVersionUID = 1L;
+
+    public NotFoundException(String message) {
+        super(message);
+    }
+
+    public NotFoundException() {
+        super();
+    }
+}

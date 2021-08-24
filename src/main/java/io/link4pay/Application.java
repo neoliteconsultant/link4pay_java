@@ -1,22 +1,3 @@
-# Link4Pay Java library
-
-The Link4Pay Java library provides integration access to the Link4Pay Gateway.
-
-
-
-## Dependencies
-
-* none
-
-Java version >= 8 is required. The Link4Pay Java SDK is tested against Java versions 8 and 11.
-
-
-
-
-
-## Quick Start Example
-
-````java
 package io.link4pay;
 
 import io.link4pay.model.HostedPayment;
@@ -46,24 +27,3 @@ public class Application {
         }
     }
 }
-
-````
-
-## Gradle
-
-  With Gradle installed, this package can be built simply by running this command:
-
-    ./gradlew build
-
-  The resulting jar file will be produced in build/libs/.
-
-## Development
-
-See our [development notes](DEVELOPMENT.md).
-
-
-
-## License
-
-See the LICENSE file.
-
