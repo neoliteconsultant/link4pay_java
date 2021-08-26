@@ -1,6 +1,11 @@
 package io.link4pay.model;
 
+import com.google.gson.Gson;
+import io.link4pay.model.requests.PaymentWithHpp;
+import static io.link4pay.model.requests.PaymentWithHpp.*;
+
 public class PaymentRequest extends Request{
+    private Gson gson = new Gson();
     private String merchantID;
     private String customerID;
     private String firstName;
@@ -127,121 +132,47 @@ public class PaymentRequest extends Request{
     @Override
     public String toJSON() {
 
-        String request ="{\n" +
-                "  \"lang\": \"en\",\n" +
-                "  \"merchant\":\n" +
-                "  {\n" +
-                "    \"merchantID\": \"MER09821725\",\n" +
-                "    \"customerID\": \"CUS77743201\"\n" +
-                "  },\n" +
-                "  \"customer\":\n" +
-                "  {\n" +
-                "    \"billingAddress\":\n" +
-                "    {\n" +
-                "      \"firstName\": \"Joe\",\n" +
-                "      \"lastName\": \"Test\",\n" +
-                "      \"mobileNo\": \"3123456789\",\n" +
-                "      \"emailId\": \"test@test.test\",\n" +
-                "      \"addressLine1\": \"abc\",\n" +
-                "      \"addressLine2\": \"abc\",\n" +
-                "      \"city\": \"abc\",\n" +
-                "      \"state\": \"abc\",\n" +
-                "      \"zip\": \"AR12345\",\n" +
-                "      \"country\":\"CY\"\n" +
-                "    },\n" +
-                "    \"shippingAddress\":\n" +
-                "    {\n" +
-                "      \"sFirstName\": \"Joe\",\n" +
-                "      \"sLastName\": \"Test\",\n" +
-                "      \"sMobileNo\": \"3123456789\",\n" +
-                "      \"sEmailId\": \"test@test.test\",\n" +
-                "      \"sAddressLine1\": \"abc\",\n" +
-                "      \"sAddressLine2\": \"abc\",\n" +
-                "      \"sCity\": \"abc\",\n" +
-                "      \"sState\": \"abc\",\n" +
-                "      \"sZip\": \"AR12345\",\n" +
-                "      \"sCountry\":\"CY\"\n" +
-                "    }\n" +
-                "  },\n" +
-                "  \"transaction\":\n" +
-                "  {\n" +
-                "    \"txnAmount\": \"19.99\",\n" +
-                "    \"currencyCode\": \"EUR\",\n" +
-                "    \"txnReference\": \"REF0013tt22112\",\n" +
-                "    \"payout\": \"true/false\",\n" +
-                "    \"isApp\": true,\n" +
-                "    \"3DSecure\":{\n" +
-                "\n" +
-                "     \"exemptions\":{\n" +
-                "        \"lowValue\":true,\n" +
-                "        \"tra\": true,\n" +
-                "        \"trustedBeneficiary\":true,\n" +
-                "        \"secureCorporatePayment\":true,\n" +
-                "        \"delegatedAuthentication\":true,\n" +
-                "        \"recurringMITExemptionSameAmount\" : true,\n" +
-                "        \"recurringMITExemptionOther\" : true,\n" +
-                "        \"vmid\":\"12345\"\n" +
-                "    },\n" +
-                "       \"challengeIndicator\":\"01\",\n" +
-                "       \"challengeWindowSize\":\"05\"\n" +
-                "  }\n" +
-                "  },\n" +
-                "  \"dynamicDescriptor\":\n" +
-                "  {\n" +
-                "    \"name\":\"COMPANY NAME LTD\",\n" +
-                "    \"email\":\"joedoe@example.com\",\n" +
-                "    \"mobile\":\"123456798\"\n" +
-                "  },\n" +
-                "  \"url\":\n" +
-                "  {\n" +
-                "    \"successURL\": \"http://www.domain.com/SuccessResponse.html\",\n" +
-                "    \"failURL\": \"http://www.domain.com/FailResponse.html\",\n" +
-                "    \"cancelURL\": \"http://www.domain.com/CancelResponse.html\",\n" +
-                "    \"showConfirmationPage\": \"true\",\n" +
-                "    \"cartURL\": \"http://www.domain.com/Cart.html\",\n" +
-                "    \"productURL\": \"http://www.domain.com/Product.html\",\n" +
-                "    \"iFrame\": \"true/false\"\n" +
-                " },\n" +
-                "  \"summary\":\n" +
-                "  {\n" +
-                "    \"totalValue\": \"19.07\",\n" +
-                "    \"details\":\n" +
-                "    {\n" +
-                "      \"subtotal\": \"19.41\",\n" +
-                "      \"tax\": \"0.03\",\n" +
-                "      \"shippingCharges\": \"0.55\"\n" +
-                "    },\n" +
-                "    \"discount\":\n" +
-                "    {\n" +
-                "      \"discountValue\": \"0.40\",\n" +
-                "      \"couponCode\": \"FIRST40\",\n" +
-                "      \"couponCodeDetails\": \"Get $0.4 off on every transaction. *T&C apply\"\n" +
-                "    }\n" +
-                "  },\n" +
-                "  \"items\":\n" +
-                "  [\n" +
-                "    {\n" +
-                "      \"itemName\": \"RBK fitness shoes\",\n" +
-                "      \"itemId\": \"ITM001\",\n" +
-                "      \"itemPricePerUnit\": \"2.49\",\n" +
-                "      \"itemQuantity\": \"2\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"itemName\": \"Nike DriFit T-shirt\",\n" +
-                "      \"itemId\": \"ITM002\",\n" +
-                "      \"itemPricePerUnit\": \"1.99\",\n" +
-                "      \"itemQuantity\": \"1\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"customData\":{\n" +
-                "  \"customData1\":\"\",\n" +
-                "  \"customData2\":\"\",\n" +
-                "  \"customData3\":\"\",\n" +
-                "  \"customData4\":\"\",\n" +
-                "  \"customData5\":\"\",\n" +
-                "  \"site\":\"\"\n" +
-                "  }\n" +
-                " }\n";
-        return request;
+        PaymentWithHpp paymentWithHPP = new PaymentWithHpp();
+        paymentWithHPP.lang="en";
+
+        Merchant merchant = new Merchant();
+        merchant.merchantID = merchantID;
+        merchant.customerID = customerID;
+        paymentWithHPP.merchant = merchant;
+
+        BillingAddress billingAddress = new BillingAddress();
+        billingAddress.firstName = firstName;
+        billingAddress.lastName = lastName;
+        billingAddress.mobileNo = mobileNo;
+        billingAddress.emailId = emailId;
+        billingAddress.addressLine1 = addressLine1;
+        billingAddress.addressLine2 = addressLine2;
+        billingAddress.city = city;
+        billingAddress.state = state;
+        billingAddress.zip = zip;
+        billingAddress.country = country;
+
+        Customer customer = new Customer();
+        customer.billingAddress = billingAddress;
+        paymentWithHPP.customer = customer;
+
+        Transaction transaction = new Transaction();
+        transaction.txnAmount = String.valueOf(txnAmount);
+        transaction.currencyCode = currencyCode;
+        transaction.txnReference = txnReference;
+        transaction.payout = "true/false";
+        paymentWithHPP.transaction = transaction;
+
+        Url url = new Url();
+        url.successURL = successURL;
+        url.failURL = failURL;
+        url.cancelURL = cancelURL;
+        url.showConfirmationPage = showConfirmationPage;
+        url.cartURL = cartURL;
+        url.productURL = productURL;
+        paymentWithHPP.url = url;
+
+        return gson.toJson(paymentWithHPP);
+
     }
 }
