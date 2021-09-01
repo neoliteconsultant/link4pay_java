@@ -16,13 +16,12 @@ public class Configuration {
     private String accessToken;
     private String clientId;
     private String clientSecret;
-    private String merchantId;
     private String privateKey;
     private String publicKey;
     private static Logger logger;
 
     static {
-        logger = Logger.getLogger("Braintree");
+        logger = Logger.getLogger("Link4Pay");
         logger.setLevel(Level.INFO);
     }
 
@@ -34,14 +33,10 @@ public class Configuration {
     }
 
 
-    public Configuration(Environment environment, String merchantId, String publicKey, String privateKey) {
+    public Configuration(Environment environment,String publicKey, String privateKey) {
         this.environment = environment;
 
-        if (merchantId == null || merchantId.isEmpty()) {
-            throw new ConfigurationException("merchantId needs to be set");
-        } else {
-            this.merchantId = merchantId;
-        }
+
 
         if (publicKey == null || publicKey.isEmpty()) {
             throw new ConfigurationException("publicKey needs to be set");
@@ -56,8 +51,8 @@ public class Configuration {
         }
     }
 
-    public Configuration(String environment, String merchantId, String publicKey, String privateKey) {
-        this(Environment.parseEnvironment(environment), merchantId, publicKey, privateKey);
+    public Configuration(String environment, String publicKey, String privateKey) {
+        this(Environment.parseEnvironment(environment),  publicKey, privateKey);
     }
 
 
@@ -112,6 +107,10 @@ public class Configuration {
 
     public String getHostedPaymentPagePath() {
         return "https://hpptest.link4pay.com";
+    }
+
+    public String getWithoutHostedPaymentPagePath() {
+        return "https://merchant.test.link4pay.com";
     }
 
     public String getBaseURL() {

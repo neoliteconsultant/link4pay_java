@@ -2,12 +2,16 @@ package io.link4pay.util;
 
 import io.link4pay.exceptions.*;
 import io.link4pay.model.Request;
+import io.link4pay.security.AESEncryption2;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -45,8 +49,12 @@ public class Http {
             throwExceptionIfErrorStatusCode(connection.getResponseCode(), connection.getResponseMessage());
 
             final String requestJSON = request.toJSON();
+            SecretKey key = AESEncryption2.generateKey(128);
+            IvParameterSpec ivParameterSpec = AESEncryption2.generateIv();
+
+            String cipherText = AESEncryption2.encrypt(requestJSON, key, ivParameterSpec);
             try(OutputStream os = connection.getOutputStream()) {
-                byte[] input = requestJSON.getBytes("utf-8");
+                byte[] input = cipherText.getBytes("utf-8");
                 os.write(input, 0, input.length);
             }
 
@@ -60,9 +68,9 @@ public class Http {
             }
 
             response = content.toString();
-        }catch (IOException ioe){
+        }catch (Exception ex){
             //ioe.printStackTrace();
-            ioe.getMessage();
+            ex.getMessage();
         }
 
         return response;

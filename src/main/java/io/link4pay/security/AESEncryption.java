@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.spec.IvParameterSpec;
+import java.security.SecureRandom;
 import java.util.Random;
 import javax.crypto.Cipher;
 import java.util.logging.Logger;
@@ -37,7 +38,7 @@ public class AESEncryption {
             final int ivSize = iv.length;
             final IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
             final SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
-            cipher.init(1, secretKeySpec, ivParameterSpec);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
             final byte[] encrypted = cipher.doFinal(clean);
             final byte[] encryptedIVAndText = new byte[ivSize + encrypted.length];
             System.arraycopy(iv, 0, encryptedIVAndText, 0, ivSize);
@@ -49,6 +50,12 @@ public class AESEncryption {
         }
 
         return null;
+    }
+
+    public static IvParameterSpec generateIv() {
+        byte[] iv = new byte[16];
+        new SecureRandom().nextBytes(iv);
+        return new IvParameterSpec(iv);
     }
 
     public byte[] decrypt(final String code, final String keyData) {
