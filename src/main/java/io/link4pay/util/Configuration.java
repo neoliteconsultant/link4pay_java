@@ -25,12 +25,7 @@ public class Configuration {
         logger.setLevel(Level.INFO);
     }
 
-    //public static final String VERSION = new ClientLibraryProperties().version();
-    public static final String GRAPHQL_API_VERSION = "2018-05-21";
 
-    public static String apiVersion() {
-        return "6";
-    }
 
 
     public Configuration(Environment environment,String publicKey, String privateKey) {

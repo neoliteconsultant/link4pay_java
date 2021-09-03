@@ -1,15 +1,18 @@
 package io.link4pay;
 
+import io.link4pay.model.Result;
+import io.link4pay.model.transaction.Item;
+import io.link4pay.model.transaction.TransactionRequest;
+import io.link4pay.model.transaction.TransactionResponse;
 import io.link4pay.model.checkout.CheckoutRequest;
-import io.link4pay.model.TransactionResponse;
-import io.link4pay.model.management.ManagementHttpRequest;
 import io.link4pay.model.management.ManagementRequest;
 import io.link4pay.model.payment.HostedPayment;
-import io.link4pay.model.TransactionRequest;
-import io.link4pay.model.Result;
 import io.link4pay.model.refund.RefundRequest;
 import io.link4pay.model.tokenization.TokenizationRequest;
 import io.link4pay.model.void_transaction.VoidRequest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Application {
@@ -22,25 +25,43 @@ public class Application {
                 "the_public_key",
                 "the_private_key");
 
+        List<Item> items = new ArrayList<>();
+        items.add(new Item("RBK fitness shoes", "ITM001", "2.49", "2"));
+        items.add(new Item(" Nike DriFit T-shirt", "ITM002", "1.99", "1"));
+
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.merchantID("MER09821725")
                 .customerID("CUS77743201").firstName("Joe")
                 .lastName("Test").emailId("test@test.test").addressLine1("NYC")
                 .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
+                .shippingFirstName("Joe")
+                .shippingLastName("Test").shippingEmailId("test@test.test").shippingAddressLine1("NYC")
+                .shippingAddressLine2("NYC").shippingCity("NYC").shippingCountry("US").shippingState("NYC").
+                shippingZip("20912")
                 .currencyCode("USD").txnAmount(8.99).txnReference("REF0013tt22112")
+                .isApp(true)
+                .items(items).totalValue("19.07").subtotal("19.41").tax("0.03").shippingCharges("0.55")
+                .discountValue("0.40").couponCode("FIRST40").couponCodeDetails("Get $0.4 off on every transaction. *T&C apply")
                 .successURL("http://www.domain.com/SuccessResponse.html").
                 productURL("http://www.domain.com/Product.html")
                 .failURL("http://www.domain.com/FailResponse.htm").
                 cancelURL("http://www.domain.com/CancelResponse.html")
                 .cartURL("http://www.domain.com/Cart.html")
-                .showConfirmationPage("true");
+                .showConfirmationPage("true").customData1("item").
+                customData2("item").customData3("item").
+                customData4("item").customData5("item")
+                .site("https://link4pay.com");
 
 
         final Result<HostedPayment> hostedPaymentResult = link4PayGateway.paymentService().payWithHPP(transactionRequest);
 
+
         if (hostedPaymentResult.isSuccess()) {
             HostedPayment hostedPayment = hostedPaymentResult.getTarget();
             System.out.println("Success!: " + hostedPayment.getResponse());
+        } else {
+            System.out.println("Status Code !: " + hostedPaymentResult.getStatusCode());
+            System.out.println("Error!: " + hostedPaymentResult.getMessage());
         }
     }
 
@@ -70,6 +91,9 @@ public class Application {
         if (hostedPaymentResult.isSuccess()) {
             HostedPayment hostedPayment = hostedPaymentResult.getTarget();
             System.out.println("Success!: " + hostedPayment.getResponse());
+        } else {
+            System.out.println("Status Code !: " + hostedPaymentResult.getStatusCode());
+            System.out.println("Error!: " + hostedPaymentResult.getMessage());
         }
     }
 
@@ -87,6 +111,9 @@ public class Application {
         if (checkoutResponseResult.isSuccess()) {
             TransactionResponse hostedPayment = checkoutResponseResult.getTarget();
             System.out.println("Success!: " + hostedPayment.response.description);
+        } else {
+            System.out.println("Status Code !: " + checkoutResponseResult.getStatusCode());
+            System.out.println("Error!: " + checkoutResponseResult.getMessage());
         }
     }
 
@@ -102,8 +129,11 @@ public class Application {
                 link4PayGateway.paymentService().voidTransaction(voidRequest);
 
         if (voidResponseResult.isSuccess()) {
-            TransactionResponse hostedPayment = voidResponseResult.getTarget();
-            System.out.println("Success!: " + hostedPayment.response.description);
+            TransactionResponse voidResponse = voidResponseResult.getTarget();
+            System.out.println("Success!: " + voidResponse.response.description);
+        } else {
+            System.out.println("Status Code !: " + voidResponseResult.getStatusCode());
+            System.out.println("Error!: " + voidResponseResult.getMessage());
         }
     }
 
@@ -117,12 +147,15 @@ public class Application {
                 .comments("First refund")
                 .name("COMPANY NAME LTD").email("joedoe@example.com")
                 .mobile("123456798");
-        final Result<TransactionResponse> voidResponseResult =
+        final Result<TransactionResponse> refundResponseResult =
                 link4PayGateway.paymentService().refundTransaction(refundRequest);
 
-        if (voidResponseResult.isSuccess()) {
-            TransactionResponse hostedPayment = voidResponseResult.getTarget();
-            System.out.println("Success!: " + hostedPayment.response.description);
+        if (refundResponseResult.isSuccess()) {
+            TransactionResponse refund = refundResponseResult.getTarget();
+            System.out.println("Success!: " + refund.response.description);
+        } else {
+            System.out.println("Status Code !: " + refundResponseResult.getStatusCode());
+            System.out.println("Error!: " + refundResponseResult.getMessage());
         }
     }
 
@@ -147,12 +180,48 @@ public class Application {
                 .showConfirmationPage("true");
 
 
-        final Result<TransactionResponse> payoutResult = link4PayGateway.payout().payout(transactionRequest);
+        final Result<TransactionResponse> tokenizationResult = link4PayGateway.payout().tokenizationPayout(transactionRequest);
 
 
-        if (payoutResult.isSuccess()) {
-            TransactionResponse hostedPayment = payoutResult.getTarget();
+        if (tokenizationResult.isSuccess()) {
+            TransactionResponse payoutResult = tokenizationResult.getTarget();
+            System.out.println("Success!: " + payoutResult.response.description);
+        } else {
+            System.out.println("Status Code !: " + tokenizationResult.getStatusCode());
+            System.out.println("Error!: " + tokenizationResult.getMessage());
+        }
+    }
+
+    public static void cardPayout() {
+        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "the_public_key",
+                "the_private_key");
+
+        TransactionRequest transactionRequest = new TransactionRequest();
+        transactionRequest.merchantID("MER09821725")
+                .customerID("CUS77743201").firstName("Joe")
+                .lastName("Test").emailId("test@test.test").addressLine1("NYC")
+                .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
+                .currencyCode("USD").txnAmount(8.99).txnReference("REF0013tt22112")
+                .hostedPage(true).tokenId("476173-994987418383314681-0200")
+                .async(false).payout(true)
+                .successURL("http://www.domain.com/SuccessResponse.html").
+                productURL("http://www.domain.com/Product.html")
+                .failURL("http://www.domain.com/FailResponse.htm").
+                cancelURL("http://www.domain.com/CancelResponse.html")
+                .cartURL("http://www.domain.com/Cart.html")
+                .showConfirmationPage("true");
+
+
+        final Result<TransactionResponse> cardPayoutResult = link4PayGateway.payout().cardPayout(transactionRequest);
+
+
+        if (cardPayoutResult.isSuccess()) {
+            TransactionResponse hostedPayment = cardPayoutResult.getTarget();
             System.out.println("Success!: " + hostedPayment.response.description);
+        } else {
+            System.out.println("Status Code !: " + cardPayoutResult.getStatusCode());
+            System.out.println("Error!: " + cardPayoutResult.getMessage());
         }
     }
 
@@ -171,12 +240,15 @@ public class Application {
                 .encAlgorithm("").keySequenceNumber(0.0).acquirer("");
 
 
-        final Result<TransactionResponse> payoutResult = link4PayGateway.tokenization().saveCard(tokenizationRequest);
+        final Result<TransactionResponse> saveCardResult = link4PayGateway.tokenization().saveCard(tokenizationRequest);
 
 
-        if (payoutResult.isSuccess()) {
-            TransactionResponse hostedPayment = payoutResult.getTarget();
-            System.out.println("Success!: " + hostedPayment.response.description);
+        if (saveCardResult.isSuccess()) {
+            TransactionResponse saveCardResponse = saveCardResult.getTarget();
+            System.out.println("Success!: " + saveCardResponse.response.description);
+        } else {
+            System.out.println("Status Code !: " + saveCardResult.getStatusCode());
+            System.out.println("Error!: " + saveCardResult.getMessage());
         }
     }
 
@@ -190,12 +262,15 @@ public class Application {
                 .tokenID("476173-994987418383314681-0200").showAllCards(true);
 
 
-        final Result<TransactionResponse> payoutResult = link4PayGateway.tokenization().verifyCard(tokenizationRequest);
+        final Result<TransactionResponse> verifyCardResult = link4PayGateway.tokenization().verifyCard(tokenizationRequest);
 
 
-        if (payoutResult.isSuccess()) {
-            TransactionResponse hostedPayment = payoutResult.getTarget();
-            System.out.println("Success!: " + hostedPayment.response.description);
+        if (verifyCardResult.isSuccess()) {
+            TransactionResponse verifyCard = verifyCardResult.getTarget();
+            System.out.println("Success!: " + verifyCard.response.description);
+        } else {
+            System.out.println("Status Code !: " + verifyCardResult.getStatusCode());
+            System.out.println("Error!: " + verifyCardResult.getMessage());
         }
     }
 
@@ -209,12 +284,15 @@ public class Application {
                 .tokenID("476173-994987418383314681-0200");
 
 
-        final Result<TransactionResponse> payoutResult = link4PayGateway.tokenization().verifyToken(tokenizationRequest);
+        final Result<TransactionResponse> verifyTokenResult = link4PayGateway.tokenization().verifyToken(tokenizationRequest);
 
 
-        if (payoutResult.isSuccess()) {
-            TransactionResponse hostedPayment = payoutResult.getTarget();
-            System.out.println("Success!: " + hostedPayment.response.description);
+        if (verifyTokenResult.isSuccess()) {
+            TransactionResponse verifyToken = verifyTokenResult.getTarget();
+            System.out.println("Success!: " + verifyToken.response.description);
+        } else {
+            System.out.println("Status Code !: " + verifyTokenResult.getStatusCode());
+            System.out.println("Error!: " + verifyTokenResult.getMessage());
         }
     }
 
@@ -228,12 +306,15 @@ public class Application {
                 .tokenID("476173-994987418383314681-0200");
 
 
-        final Result<TransactionResponse> payoutResult = link4PayGateway.tokenization().deleteToken(tokenizationRequest);
+        final Result<TransactionResponse> deleteTokenResult = link4PayGateway.tokenization().deleteToken(tokenizationRequest);
 
 
-        if (payoutResult.isSuccess()) {
-            TransactionResponse hostedPayment = payoutResult.getTarget();
-            System.out.println("Success!: " + hostedPayment.response.description);
+        if (deleteTokenResult.isSuccess()) {
+            TransactionResponse deleteToken = deleteTokenResult.getTarget();
+            System.out.println("Success!: " + deleteToken.response.description);
+        } else {
+            System.out.println("Status Code !: " + deleteTokenResult.getStatusCode());
+            System.out.println("Error!: " + deleteTokenResult.getMessage());
         }
     }
 
@@ -247,12 +328,15 @@ public class Application {
                 .tokenID("476173-994987418383314681-0200").showAllCards(true);
 
 
-        final Result<TransactionResponse> payoutResult = link4PayGateway.tokenization().verifyCard(tokenizationRequest);
+        final Result<TransactionResponse> verifyCardResult = link4PayGateway.tokenization().verifyCard(tokenizationRequest);
 
 
-        if (payoutResult.isSuccess()) {
-            TransactionResponse hostedPayment = payoutResult.getTarget();
-            System.out.println("Success!: " + hostedPayment.response.description);
+        if (verifyCardResult.isSuccess()) {
+            TransactionResponse verifyCard = verifyCardResult.getTarget();
+            System.out.println("Success!: " + verifyCard.response.description);
+        } else {
+            System.out.println("Status Code !: " + verifyCardResult.getStatusCode());
+            System.out.println("Error!: " + verifyCardResult.getMessage());
         }
     }
 
@@ -278,15 +362,21 @@ public class Application {
                 .showConfirmationPage("true");
 
 
-        final Result<TransactionResponse> payoutResult = link4PayGateway.paymentLink().generateLink(transactionRequest);
+        final Result<TransactionResponse> generateLinkResult = link4PayGateway.paymentLink().generateLink(transactionRequest);
 
 
-        if (payoutResult.isSuccess()) {
-            TransactionResponse hostedPayment = payoutResult.getTarget();
-            System.out.println("Success!: " + hostedPayment.response.description);
+        if (generateLinkResult.isSuccess()) {
+            TransactionResponse generateLinkPayment = generateLinkResult.getTarget();
+            System.out.println("Success!: " + generateLinkPayment.response.description);
+        } else {
+            System.out.println("Status Code !: " + generateLinkResult.getStatusCode());
+            System.out.println("Error!: " + generateLinkResult.getMessage());
         }
     }
 
+    /**
+     *
+     */
     public static void validateSetup() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
                 "the_public_key",
@@ -299,12 +389,15 @@ public class Application {
         managementRequest.certificate("4A:91:EB:11:73:4A:91:EB:11:CF:12:24:FC:2D:74:4A:91:EB:11");
         managementRequest.apiToken("c23123ase8cc2324d532424234234234b");
 
-        final Result<TransactionResponse> payoutResult = link4PayGateway.managementService().validateSetup(managementRequest);
+        final Result<TransactionResponse> validateSetupResult = link4PayGateway.managementService().validateSetup(managementRequest);
 
 
-        if (payoutResult.isSuccess()) {
-            TransactionResponse hostedPayment = payoutResult.getTarget();
-            System.out.println("Success!: " + hostedPayment.response.description);
+        if (validateSetupResult.isSuccess()) {
+            TransactionResponse validateSetup = validateSetupResult.getTarget();
+            System.out.println("Success!: " + validateSetup.response.description);
+            System.out.println("Status Code !: " + validateSetupResult.getStatusCode());
+        } else {
+            System.out.println("Error!: " + validateSetupResult.getMessage());
         }
     }
 }

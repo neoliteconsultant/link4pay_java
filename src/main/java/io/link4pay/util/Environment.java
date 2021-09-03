@@ -3,18 +3,18 @@ package io.link4pay.util;
 import java.util.Arrays;
 
 /**
- * Indicates the environment of the Braintree Gateway with which to interact.
+ * Indicates the environment of the Link4pay Gateway with which to interact.
  */
 public class Environment {
-    /** For Braintree internal development. */
+    /** For Link4pay internal development. */
     public static final Environment DEVELOPMENT = new Environment(developmentBaseURL() + ":" + developmentPort(), "http://auth.venmo.dev:9292", new String[]{}, "development");
-    public static final Environment QA = new Environment("https://gateway.qa.braintreepayments.com:443", "https://auth.qa.venmo.com", new String[]{"ssl/api_braintreegateway_com.ca.crt", "ssl/payments_braintreeapi_com.ca.crt"}, "qa");
+    public static final Environment QA = new Environment("https://gateway.qa.braintreepayments.com:443", "https://auth.qa.venmo.com", new String[]{"ssl/api_link4pay_com.ca.crt", "ssl/payments_braintreeapi_com.ca.crt"}, "qa");
 
     /** For production. */
-    public static final Environment PRODUCTION = new Environment("https://api.braintreegateway.com:443", "https://auth.venmo.com", new String[]{"ssl/api_braintreegateway_com.ca.crt", "ssl/payments_braintreeapi_com.ca.crt"}, "production");
+    public static final Environment PRODUCTION = new Environment("https://api.link4pay.com:443", "https://auth.venmo.com", new String[]{"ssl/api_link4pay_com.ca.crt", "ssl/payments_braintreeapi_com.ca.crt"}, "production");
 
     /** For merchants to use during their development and testing. */
-    public static final Environment SANDBOX = new Environment("https://api.sandbox.braintreegateway.com:443", "https://auth.sandbox.venmo.com", new String[]{"ssl/api_braintreegateway_com.ca.crt", "ssl/payments_braintreeapi_com.ca.crt"}, "sandbox");
+    public static final Environment SANDBOX = new Environment("https://api.sandbox.link4pay.com:443", "https://auth.sandbox.venmo.com", new String[]{"ssl/api_link4pay_com.ca.crt", "ssl/payments_braintreeapi_com.ca.crt"}, "sandbox");
 
     private String environmentName;
 

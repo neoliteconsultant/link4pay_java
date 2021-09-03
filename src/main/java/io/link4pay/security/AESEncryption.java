@@ -1,101 +1,38 @@
 package io.link4pay.security;
 
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.io.IOException;
-
-import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.spec.IvParameterSpec;
-import java.security.SecureRandom;
-import java.util.Random;
 import javax.crypto.Cipher;
-import java.util.logging.Logger;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.BadPaddingException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.SealedObject;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.util.Base64;
 
 public class AESEncryption {
-    private Logger log;
-    private Cipher cipher;
-    private final Random random = new Random();
+    private static final String algorithm = "AES/CBC/PKCS5Padding";
 
-
-    public AESEncryption() {
-        try {
-            log = Logger.getLogger(AESEncryption.class.getName());
-            cipher = Cipher.getInstance("AES/CBC/NoPadding");
-            final Field field = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
-            field.setAccessible(true);
-            final Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(field, field.getModifiers() & 0xFFFFFFEF);
-            field.set(null, false);
-        } catch (Exception e) {
-            log.severe(e.getMessage());
-        }
-    }
-
-    public String encrypt(final String plainText, final byte[] key, final byte[] iv) {
-        try {
-            final byte[] clean = padString(plainText).getBytes();
-            final int ivSize = iv.length;
-            final IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-            final SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
-            final byte[] encrypted = cipher.doFinal(clean);
-            final byte[] encryptedIVAndText = new byte[ivSize + encrypted.length];
-            System.arraycopy(iv, 0, encryptedIVAndText, 0, ivSize);
-            System.arraycopy(encrypted, 0, encryptedIVAndText, ivSize, encrypted.length);
-            return bytesToHex(encryptedIVAndText);
-        } catch (Exception e) {
-            log.severe(e.getMessage());
-
-        }
-
-        return null;
-    }
-
-    public static IvParameterSpec generateIv() {
-        byte[] iv = new byte[16];
-        new SecureRandom().nextBytes(iv);
-        return new IvParameterSpec(iv);
-    }
-
-    public byte[] decrypt(final String code, final String keyData) {
-        byte[] decrypted = null;
-        try {
-            final byte[] encryptedText = hexToBytes(code);
-            if (encryptedText.length == 0) {
-                throw new IOException("[decrypt] Incorrect Values");
-            }
-            final byte[] iv = new byte[cipher.getBlockSize()];
-            System.arraycopy(encryptedText, 0, iv, 0, iv.length);
-            final IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-            if (code != null && code.isEmpty()) {
-                throw new IOException("Empty string");
-            }
-            final int encryptedSize = encryptedText.length - cipher.getBlockSize();
-            final byte[] encryptedBytes = new byte[encryptedSize];
-            System.arraycopy(encryptedText, cipher.getBlockSize(), encryptedBytes, 0, encryptedSize);
-            final SecretKeySpec key = new SecretKeySpec(keyData.getBytes(), "AES");
-            cipher.init(2, key, ivParameterSpec);
-            decrypted = cipher.doFinal(encryptedBytes);
-        } catch (Exception e) {
-            log.severe(e.getMessage());
-
-        }
-        return decrypted;
-    }
-
-    private static String padString(final String source) {
-        final StringBuilder data = new StringBuilder(source);
-        final char paddingChar = ' ';
-        final int size = 16;
-        final int x = data.length() % size;
-        for (int padLength = size - x, i = 0; i < padLength; ++i) {
-            data.append(paddingChar);
-        }
-        return data.toString();
-    }
-
-    private static String bytesToHex(final byte[] data) {
+    /**
+     *
+     * @param data
+     * @return
+     */
+    public static String bytesToHex(final byte[] data) {
         if (data == null) {
             return "";
         }
@@ -111,46 +48,82 @@ public class AESEncryption {
         return str.toString();
     }
 
-    private static byte[] hexToBytes(final String data) {
-        if (data == null || data.length() < 2) {
-            return new byte[0];
-        }
-        final int len = data.length() / 2;
-        final byte[] buffer = new byte[len];
-        for (int i = 0; i < len; ++i) {
-            buffer[i] = (byte) Integer.parseInt(data.substring(i * 2, i * 2 + 2), 16);
-        }
-        return buffer;
+
+    /**
+     *
+     * @param input
+     * @param key
+     * @param iv
+     * @return
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidAlgorithmParameterException
+     * @throws InvalidKeyException
+     * @throws BadPaddingException
+     * @throws IllegalBlockSizeException
+     */
+    public static String encrypt(String input, SecretKey key, IvParameterSpec iv)
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+            InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        Cipher cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+        byte[] cipherText = cipher.doFinal(input.getBytes());
+//        return Base64.getEncoder()
+//                .encodeToString(cipherText);
+
+        return bytesToHex(Base64.getEncoder()
+               .encodeToString(cipherText).getBytes());
     }
 
-    public String encryptText(final String input, final String password) {
-        final byte[] passwordBytes = password.getBytes(StandardCharsets.UTF_8);
-        return this.encryptBytes(input, passwordBytes);
+
+    /**
+     *
+     * @param cipherText
+     * @param key
+     * @param iv
+     * @return
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidAlgorithmParameterException
+     * @throws InvalidKeyException
+     * @throws BadPaddingException
+     * @throws IllegalBlockSizeException
+     */
+    public static String decrypt(String cipherText, SecretKey key, IvParameterSpec iv)
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+            InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        Cipher cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.DECRYPT_MODE, key, iv);
+        byte[] plainText = cipher.doFinal(Base64.getDecoder()
+                .decode(cipherText));
+
+
+        return new String(plainText);
+
     }
 
-    public String encryptBytes(final String input, final byte[] passwordBytes) {
-        final byte[] buffer = new byte[16];
-        random.nextBytes(buffer);
-        final StringBuilder hex2 = new StringBuilder(buffer.length * 2);
-        for (final byte b : buffer) {
-            hex2.append(String.format("%02X", b));
-        }
-        switch (passwordBytes.length * 8) {
-            case 256: {
-                break;
-            }
-            case 128: {
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException("The Key must be exactly 256 or 128 bits long!");
-            }
-        }
-        return encrypt(input, passwordBytes, buffer);
+    /**
+     *
+     * @param n
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
+    public static SecretKey generateKey(int n) throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        keyGenerator.init(n);
+        SecretKey key = keyGenerator.generateKey();
+        return key;
     }
 
-    public String decryptPayload(final String authorizedPayload, final String thumbprint) throws IOException {
-        return new String(decrypt(authorizedPayload, thumbprint.substring(0, 32)));
+
+    /**
+     *
+     * @return
+     */
+    public static IvParameterSpec generateIv() {
+        byte[] iv = new byte[16];
+        new SecureRandom().nextBytes(iv);
+        return new IvParameterSpec(iv);
     }
 
 

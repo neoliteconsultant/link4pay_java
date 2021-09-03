@@ -2,9 +2,9 @@ package io.link4pay.model.tokenization;
 
 import com.google.gson.Gson;
 import io.link4pay.model.Request;
-import io.link4pay.model.TransactionHttpRequest;
+import io.link4pay.model.transaction.TransactionHttpRequest;
 
-import static io.link4pay.model.TransactionHttpRequest.*;
+import static io.link4pay.model.transaction.TransactionHttpRequest.*;
 
 public class TokenizationRequest extends Request {
     private Gson gson = new Gson();

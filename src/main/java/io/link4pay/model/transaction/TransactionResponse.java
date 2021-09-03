@@ -1,4 +1,4 @@
-package io.link4pay.model;
+package io.link4pay.model.transaction;
 
 public class TransactionResponse {
     public Response response;

@@ -1,8 +1,9 @@
 package io.link4pay.service;
 
+import io.link4pay.model.Link4PayResponse;
 import io.link4pay.model.Result;
-import io.link4pay.model.TransactionRequest;
-import io.link4pay.model.TransactionResponse;
+import io.link4pay.model.transaction.TransactionRequest;
+import io.link4pay.model.transaction.TransactionResponse;
 import io.link4pay.util.Configuration;
 import io.link4pay.util.Http;
 
@@ -17,9 +18,11 @@ public class PaymentLinkService {
 
     /**
      * Capture a previous authorization
+     * @param transactionRequest
+     * @return {@link Result}
      */
     public Result<TransactionResponse> generateLink(TransactionRequest transactionRequest){
-        String result = http.post("https://hpptest.link4pay.com/paymentpage", transactionRequest);
+        Link4PayResponse result = http.post("https://hpptest.link4pay.com/paymentpage", transactionRequest);
         return new Result<>(result, TransactionResponse.class);
 
     }

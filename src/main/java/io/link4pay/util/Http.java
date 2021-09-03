@@ -1,34 +1,25 @@
 package io.link4pay.util;
 
 import io.link4pay.exceptions.*;
+import io.link4pay.model.Link4PayResponse;
 import io.link4pay.model.Request;
-import io.link4pay.security.AESEncryption2;
+import io.link4pay.security.AESEncryption;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import javax.net.ssl.SSLSocketFactory;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 public class Http {
-    public static final String LINE_FEED = "\r\n";
-    private static final Pattern NUMBER_PATTERN = Pattern.compile("<number>(.{6}).+?(.{4})</number>");
-    private static final Pattern START_GROUP_PATTERN = Pattern.compile("(^)", Pattern.MULTILINE);
-    private static final Pattern CVV_PATTERN = Pattern.compile("<cvv>.+?</cvv>");
-    
-    
-    private volatile SSLSocketFactory sslSocketFactory;
-
-    public enum RequestMethod {
-        DELETE, GET, POST, PUT;
-    }
-
     private Configuration configuration;
 
     public Http(Configuration configuration) {
@@ -36,45 +27,81 @@ public class Http {
     }
 
 
+    public Link4PayResponse post(String endpoint, Request request) {
+        Link4PayResponse response = post(endpoint, request, null);
 
-    public String post(String endpoint, Request request)  {
-       String response = null;
+        return response;
+    }
+
+    public Link4PayResponse post(String endpoint, Request request, Map<String, String> headers) {
+        Link4PayResponse link4PayResponse = new Link4PayResponse();
+        String response = null;
         try {
             URL url = new URL(endpoint);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.addRequestProperty("Authorization", authorizationHeader());
+            if (headers != null) {
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    connection.addRequestProperty(entry.getKey(), entry.getValue());
+                }
+            }
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; utf-8");
             connection.setDoOutput(true);
 
-            throwExceptionIfErrorStatusCode(connection.getResponseCode(), connection.getResponseMessage());
+            final int connectionResponseCode = connection.getResponseCode();
 
-            final String requestJSON = request.toJSON();
-            SecretKey key = AESEncryption2.generateKey(128);
-            IvParameterSpec ivParameterSpec = AESEncryption2.generateIv();
+            link4PayResponse.setStatusCode(connectionResponseCode);
+            if (isErrorCode(connectionResponseCode)) {
+                link4PayResponse.setErrorMessage(connection.getResponseMessage());
 
-            String cipherText = AESEncryption2.encrypt(requestJSON, key, ivParameterSpec);
-            try(OutputStream os = connection.getOutputStream()) {
-                byte[] input = cipherText.getBytes("utf-8");
-                os.write(input, 0, input.length);
-            }
 
-            StringBuffer content = new StringBuffer();
-            try(BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                String inputLine;
+            } else {
+                final String requestJSON = request.toJSON();
+                SecretKey key = AESEncryption.generateKey(128);
+                IvParameterSpec ivParameterSpec = AESEncryption.generateIv();
 
-                while ((inputLine = in.readLine()) != null) {
-                    content.append(inputLine);
+                String cipherText = AESEncryption.encrypt(requestJSON, key, ivParameterSpec);
+                try (OutputStream os = connection.getOutputStream()) {
+                    byte[] input = cipherText.getBytes("utf-8");
+                    os.write(input, 0, input.length);
                 }
+
+                StringBuffer content = new StringBuffer();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                    String inputLine;
+
+                    while ((inputLine = in.readLine()) != null) {
+                        content.append(inputLine);
+                    }
+                }
+
+                response = content.toString();
+                link4PayResponse.setResponse(response);
             }
 
-            response = content.toString();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             //ioe.printStackTrace();
             ex.getMessage();
         }
 
-        return response;
+        return link4PayResponse;
     }
+
+    public String authorizationHeader() {
+        if (configuration.isAccessToken()) {
+            return "Bearer " + configuration.getAccessToken();
+        }
+        String credentials;
+        if (configuration.isClientCredentials()) {
+            credentials = configuration.getClientId() + ":" + configuration.getClientSecret();
+        } else {
+            credentials = configuration.getPublicKey() + ":" + configuration.getPrivateKey();
+        }
+        return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
+    }
+
 
     public static void throwExceptionIfErrorStatusCode(int statusCode, String message) {
         if (isErrorCode(statusCode)) {

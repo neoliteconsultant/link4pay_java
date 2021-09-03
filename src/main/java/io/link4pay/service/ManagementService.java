@@ -1,8 +1,8 @@
 package io.link4pay.service;
 
+import io.link4pay.model.Link4PayResponse;
 import io.link4pay.model.Result;
-import io.link4pay.model.TransactionRequest;
-import io.link4pay.model.TransactionResponse;
+import io.link4pay.model.transaction.TransactionResponse;
 import io.link4pay.model.management.ManagementRequest;
 import io.link4pay.util.Configuration;
 import io.link4pay.util.Http;
@@ -17,10 +17,13 @@ public class ManagementService {
     }
 
     /**
-     * Capture a previous authorization
+     * Validate a set up.
+     *
+     * @param managementRequest
+     * @return {@link Result}
      */
     public Result<TransactionResponse> validateSetup(ManagementRequest managementRequest){
-        String result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", managementRequest);
+        Link4PayResponse result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", managementRequest);
         return new Result<>(result, TransactionResponse.class);
 
     }

@@ -7,15 +7,23 @@ public class Result<T> {
     private Map<String, String> parameters;
     private String message;
     private T target;
+    private Link4PayResponse output;
     private Gson gson = new Gson();
+    private int statusCode;
 
 
     public Result() {
     }
 
 
-    public Result(String output, Class<T> klass) {
-        this.target = gson.fromJson(output,klass);
+    public Result(Link4PayResponse output, Class<T> klass) {
+        this.output = output;
+        if(output.isSuccess()) {
+            this.target = gson.fromJson(output.getResponse(), klass);
+        }else {
+            message = output.getErrorMessage();
+            statusCode = output.getStatusCode();
+        }
 
     }
 
@@ -33,8 +41,16 @@ public class Result<T> {
         return target;
     }
 
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public boolean isSuccess() {
-        return target == null;
+        return output.isSuccess();
     }
 
     public String getMessage() {

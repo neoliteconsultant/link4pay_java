@@ -1,11 +1,14 @@
 package io.link4pay.service;
 
 import io.link4pay.model.Result;
-import io.link4pay.model.TransactionRequest;
-import io.link4pay.model.TransactionResponse;
-import io.link4pay.model.checkout.CheckoutRequest;
+import io.link4pay.model.transaction.TransactionRequest;
+import io.link4pay.model.transaction.TransactionResponse;
 import io.link4pay.util.Configuration;
 import io.link4pay.util.Http;
+import io.link4pay.model.Link4PayResponse;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PayoutService {
     private Configuration configuration;
@@ -17,10 +20,29 @@ public class PayoutService {
     }
 
     /**
-     * Capture a previous authorization
+     *
+     * @param transactionRequest
+     * @return
      */
-    public Result<TransactionResponse> payout(TransactionRequest transactionRequest){
-        String result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", transactionRequest);
+    public Result<TransactionResponse> tokenizationPayout(TransactionRequest transactionRequest){
+        Map<String, String> headers = new HashMap<>();
+        headers.put("apiType","tokenPayoutDirect");
+
+        Link4PayResponse result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", transactionRequest, headers);
+        return new Result<>(result, TransactionResponse.class);
+
+    }
+
+    /**
+     *
+     * @param transactionRequest
+     * @return
+     */
+    public Result<TransactionResponse> cardPayout(TransactionRequest transactionRequest){
+        Map<String, String> headers = new HashMap<>();
+        headers.put("apiType","paymentWithoutHpp");
+
+        Link4PayResponse result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", transactionRequest, headers);
         return new Result<>(result, TransactionResponse.class);
 
     }

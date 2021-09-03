@@ -1,4 +1,4 @@
-package io.link4pay.model;
+package io.link4pay.model.transaction;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -35,7 +35,7 @@ public class TransactionHttpRequest {
         public String country;
     }
 
-    public class ShippingAddress{
+    public static class ShippingAddress{
         public String sFirstName;
         public String sLastName;
         public String sMobileNo;
@@ -113,32 +113,27 @@ public class TransactionHttpRequest {
         public String iFrame;
     }
 
-    public class Details{
+    public static class Details{
         public String subtotal;
         public String tax;
         public String shippingCharges;
     }
 
-    public class Discount{
+    public static class Discount{
         public String discountValue;
         public String couponCode;
         public String couponCodeDetails;
     }
 
-    public class Summary{
+    public static class Summary{
         public String totalValue;
         public Details details;
         public Discount discount;
     }
 
-    public class Item{
-        public String itemName;
-        public String itemId;
-        public String itemPricePerUnit;
-        public String itemQuantity;
-    }
 
-    public class CustomData{
+
+    public static class CustomData{
         public String customData1;
         public String customData2;
         public String customData3;

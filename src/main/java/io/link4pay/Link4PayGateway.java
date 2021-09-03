@@ -53,19 +53,20 @@ public class Link4PayGateway {
     }
 
     /**
-     * Returns an {@link PaymentService} service for interacting with
-     * PaymentService API.
+     * Returns an {@link PayoutService} service for interacting with
+     * PayoutService API.
      *
-     * @return an {@link PaymentService}.
+     * @return an {@link PayoutService}.
      */
     public PayoutService payout() {
         return new PayoutService(http, configuration);
     }
+
     /**
-     * Returns an {@link PaymentService} service for interacting with
+     * Returns an {@link TokenizationService} service for interacting with
      * PaymentService API.
      *
-     * @return an {@link PaymentService}.
+     * @return an {@link TokenizationService}.
      */
     public TokenizationService tokenization() {
         return new TokenizationService(http, configuration);
