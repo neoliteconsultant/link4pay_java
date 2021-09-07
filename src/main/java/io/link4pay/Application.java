@@ -1,9 +1,7 @@
 package io.link4pay;
 
 import io.link4pay.model.Result;
-import io.link4pay.model.transaction.Item;
-import io.link4pay.model.transaction.TransactionRequest;
-import io.link4pay.model.transaction.TransactionResponse;
+import io.link4pay.model.transaction.*;
 import io.link4pay.model.checkout.CheckoutRequest;
 import io.link4pay.model.management.ManagementRequest;
 import io.link4pay.model.payment.HostedPayment;
@@ -11,13 +9,15 @@ import io.link4pay.model.refund.RefundRequest;
 import io.link4pay.model.tokenization.TokenizationRequest;
 import io.link4pay.model.void_transaction.VoidRequest;
 
+import static io.link4pay.model.transaction._3DSecure.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Application {
     public static void main(String[] args) {
-        payWithHPP();
+        saveCard();
     }
 
     public static void payWithHPP() {
@@ -29,6 +29,15 @@ public class Application {
         items.add(new Item("RBK fitness shoes", "ITM001", "2.49", "2"));
         items.add(new Item(" Nike DriFit T-shirt", "ITM002", "1.99", "1"));
 
+        _3DSecure _3dSecure = new _3DSecure();
+        _3dSecure.challengeIndicator = "01";
+        _3dSecure.challengeWindowSize = "05";
+        _3dSecure.exemptions = new Exemptions(true, true,
+                true, true,
+                true, true,
+                true, "12345");
+
+
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.merchantID("MER09821725")
                 .customerID("CUS77743201").firstName("Joe")
@@ -39,14 +48,16 @@ public class Application {
                 .shippingAddressLine2("NYC").shippingCity("NYC").shippingCountry("US").shippingState("NYC").
                 shippingZip("20912")
                 .currencyCode("USD").txnAmount(8.99).txnReference("REF0013tt22112")
-                .isApp(true)
+                .isApp(true).payout("true/false")
+                ._3DSecure(_3dSecure)
                 .items(items).totalValue("19.07").subtotal("19.41").tax("0.03").shippingCharges("0.55")
                 .discountValue("0.40").couponCode("FIRST40").couponCodeDetails("Get $0.4 off on every transaction. *T&C apply")
+                .dynamicDescriptor(new DynamicDescriptor("COMPANY NAME LTD", "joedoe@example.com", "123456798"))
                 .successURL("http://www.domain.com/SuccessResponse.html").
                 productURL("http://www.domain.com/Product.html")
                 .failURL("http://www.domain.com/FailResponse.htm").
                 cancelURL("http://www.domain.com/CancelResponse.html")
-                .cartURL("http://www.domain.com/Cart.html")
+                .cartURL("http://www.domain.com/Cart.html").iFrame("true/false")
                 .showConfirmationPage("true").customData1("item").
                 customData2("item").customData3("item").
                 customData4("item").customData5("item")
@@ -54,8 +65,6 @@ public class Application {
 
 
         final Result<HostedPayment> hostedPaymentResult = link4PayGateway.paymentService().payWithHPP(transactionRequest);
-
-
         if (hostedPaymentResult.isSuccess()) {
             HostedPayment hostedPayment = hostedPaymentResult.getTarget();
             System.out.println("Success!: " + hostedPayment.getResponse());
@@ -70,24 +79,35 @@ public class Application {
                 "the_public_key",
                 "the_private_key");
 
+        _3DSecure _3dSecure = new _3DSecure();
+        _3dSecure.challengeIndicator = "01";
+        _3dSecure.challengeWindowSize = "05";
+
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.merchantID("MER09821725")
                 .customerID("CUS77743201").firstName("Joe")
                 .lastName("Test").emailId("test@test.test").addressLine1("NYC")
                 .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
                 .currencyCode("USD").txnAmount(8.99).txnReference("REF0013tt22112")
+                ._3DSecure(_3dSecure)
+                .isApp(true)
                 .paymentType("Sale").paymentMode("IDEAL").bankCode("ING")
+                .paymentDetail(new PaymentDetail("4111111111111111", "VisaCard",
+                        "2025", "12"
+                        , "John", "true", "987"))
                 .holder("John Doe").bic("GIBAATWWXXX").iban("AT15201112816")
                 .successURL("http://www.domain.com/SuccessResponse.html").
                 productURL("http://www.domain.com/Product.html")
                 .failURL("http://www.domain.com/FailResponse.htm").
                 cancelURL("http://www.domain.com/CancelResponse.html")
                 .cartURL("http://www.domain.com/Cart.html")
-                .showConfirmationPage("true");
+                .showConfirmationPage("true").
+                customData2("item").customData3("item").
+                customData4("item").customData5("item")
+                .site("https://link4pay.com");
 
 
         final Result<HostedPayment> hostedPaymentResult = link4PayGateway.paymentService().makePayment(transactionRequest);
-
         if (hostedPaymentResult.isSuccess()) {
             HostedPayment hostedPayment = hostedPaymentResult.getTarget();
             System.out.println("Success!: " + hostedPayment.getResponse());
@@ -105,6 +125,8 @@ public class Application {
         checkoutRequest.merchantID("MER09821725").txnReference("REF0013tt22112")
                 .name("COMPANY NAME LTD").email("joedoe@example.com")
                 .mobile("123456798");
+        System.out.println(checkoutRequest.toJSON());
+
         final Result<TransactionResponse> checkoutResponseResult =
                 link4PayGateway.paymentService().capture(checkoutRequest);
 
@@ -125,6 +147,9 @@ public class Application {
         voidRequest.merchantID("MER09821725").txnReference("REF0013tt22112")
                 .name("COMPANY NAME LTD").email("joedoe@example.com")
                 .mobile("123456798");
+
+        System.out.println(voidRequest.toJSON());
+
         final Result<TransactionResponse> voidResponseResult =
                 link4PayGateway.paymentService().voidTransaction(voidRequest);
 
@@ -147,6 +172,8 @@ public class Application {
                 .comments("First refund")
                 .name("COMPANY NAME LTD").email("joedoe@example.com")
                 .mobile("123456798");
+        System.out.println(refundRequest.toJSON());
+
         final Result<TransactionResponse> refundResponseResult =
                 link4PayGateway.paymentService().refundTransaction(refundRequest);
 
@@ -169,20 +196,23 @@ public class Application {
                 .customerID("CUS77743201").firstName("Joe")
                 .lastName("Test").emailId("test@test.test").addressLine1("NYC")
                 .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
+                .shippingFirstName("Joe")
+                .shippingLastName("Test").shippingEmailId("test@test.test").shippingAddressLine1("NYC")
+                .shippingAddressLine2("NYC").shippingCity("NYC").shippingCountry("US").shippingState("NYC").
+                shippingZip("20912")
                 .currencyCode("USD").txnAmount(8.99).txnReference("REF0013tt22112")
-                .hostedPage(true).tokenId("476173-994987418383314681-0200")
-                .async(false).payout(true)
+                .hostedPage(true).paymentDetail(new PaymentDetail("476173-994987418383314681-0200"))
+                .async(false).payout("true")
                 .successURL("http://www.domain.com/SuccessResponse.html").
                 productURL("http://www.domain.com/Product.html")
                 .failURL("http://www.domain.com/FailResponse.htm").
                 cancelURL("http://www.domain.com/CancelResponse.html")
-                .cartURL("http://www.domain.com/Cart.html")
-                .showConfirmationPage("true");
+                .cartURL("http://www.domain.com/Cart.html").customData1("item").
+                customData2("item").customData3("item").
+                customData4("item").customData5("item");
 
 
         final Result<TransactionResponse> tokenizationResult = link4PayGateway.payout().tokenizationPayout(transactionRequest);
-
-
         if (tokenizationResult.isSuccess()) {
             TransactionResponse payoutResult = tokenizationResult.getTarget();
             System.out.println("Success!: " + payoutResult.response.description);
@@ -197,25 +227,25 @@ public class Application {
                 "the_public_key",
                 "the_private_key");
 
+        _3DSecure _3dSecure = new _3DSecure();
+        _3dSecure.challengeIndicator = "01";
+        _3dSecure.challengeWindowSize = "05";
+
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.merchantID("MER09821725")
                 .customerID("CUS77743201").firstName("Joe")
                 .lastName("Test").emailId("test@test.test").addressLine1("NYC")
                 .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
                 .currencyCode("USD").txnAmount(8.99).txnReference("REF0013tt22112")
-                .hostedPage(true).tokenId("476173-994987418383314681-0200")
-                .async(false).payout(true)
-                .successURL("http://www.domain.com/SuccessResponse.html").
-                productURL("http://www.domain.com/Product.html")
+                .hostedPage(true).paymentDetail(new PaymentDetail("476173-994987418383314681-0200"))
+                .async(false).payout("true")
+                ._3DSecure(_3dSecure)
+                .dynamicDescriptor(new DynamicDescriptor("COMPANY NAME LTD", "joedoe@example.com", "123456798"))
+                .successURL("http://www.domain.com/SuccessResponse.html")
                 .failURL("http://www.domain.com/FailResponse.htm").
-                cancelURL("http://www.domain.com/CancelResponse.html")
-                .cartURL("http://www.domain.com/Cart.html")
-                .showConfirmationPage("true");
-
+                cancelURL("http://www.domain.com/CancelResponse.html");
 
         final Result<TransactionResponse> cardPayoutResult = link4PayGateway.payout().cardPayout(transactionRequest);
-
-
         if (cardPayoutResult.isSuccess()) {
             TransactionResponse hostedPayment = cardPayoutResult.getTarget();
             System.out.println("Success!: " + hostedPayment.response.description);
@@ -237,12 +267,10 @@ public class Application {
                 .lastName("Test").mobileNo("3123456789").emailId("test@test.test")
                 .cardNumber("4012001037167778").expMonth("05").expYear("2025")
                 .nameOnCard("John Smith").encCardNumber("")
-                .encAlgorithm("").keySequenceNumber(0.0).acquirer("");
+                .encAlgorithm("").keySequenceNumber("").acquirer("");
 
 
         final Result<TransactionResponse> saveCardResult = link4PayGateway.tokenization().saveCard(tokenizationRequest);
-
-
         if (saveCardResult.isSuccess()) {
             TransactionResponse saveCardResponse = saveCardResult.getTarget();
             System.out.println("Success!: " + saveCardResponse.response.description);
@@ -259,12 +287,9 @@ public class Application {
 
         TokenizationRequest tokenizationRequest = new TokenizationRequest();
         tokenizationRequest.merchantID("MER09821725")
-                .tokenID("476173-994987418383314681-0200").showAllCards(true);
-
+                .tokenID("476173-994987418383314681-0200").showAllCards("true");
 
         final Result<TransactionResponse> verifyCardResult = link4PayGateway.tokenization().verifyCard(tokenizationRequest);
-
-
         if (verifyCardResult.isSuccess()) {
             TransactionResponse verifyCard = verifyCardResult.getTarget();
             System.out.println("Success!: " + verifyCard.response.description);
@@ -285,8 +310,6 @@ public class Application {
 
 
         final Result<TransactionResponse> verifyTokenResult = link4PayGateway.tokenization().verifyToken(tokenizationRequest);
-
-
         if (verifyTokenResult.isSuccess()) {
             TransactionResponse verifyToken = verifyTokenResult.getTarget();
             System.out.println("Success!: " + verifyToken.response.description);
@@ -307,8 +330,6 @@ public class Application {
 
 
         final Result<TransactionResponse> deleteTokenResult = link4PayGateway.tokenization().deleteToken(tokenizationRequest);
-
-
         if (deleteTokenResult.isSuccess()) {
             TransactionResponse deleteToken = deleteTokenResult.getTarget();
             System.out.println("Success!: " + deleteToken.response.description);
@@ -324,13 +345,11 @@ public class Application {
                 "the_private_key");
 
         TokenizationRequest tokenizationRequest = new TokenizationRequest();
-        tokenizationRequest.merchantID("MER09821725")
-                .tokenID("476173-994987418383314681-0200").showAllCards(true);
+        tokenizationRequest.merchantID("MER09821725").customerID("CUS77743201")
+                .showAllCards("true");
 
 
         final Result<TransactionResponse> verifyCardResult = link4PayGateway.tokenization().verifyCard(tokenizationRequest);
-
-
         if (verifyCardResult.isSuccess()) {
             TransactionResponse verifyCard = verifyCardResult.getTarget();
             System.out.println("Success!: " + verifyCard.response.description);
@@ -351,8 +370,8 @@ public class Application {
                 .lastName("Test").emailId("test@test.test").addressLine1("NYC")
                 .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
                 .currencyCode("USD").txnAmount(8.99).txnReference("REF0013tt22112")
-                .hostedPage(true).tokenId("476173-994987418383314681-0200")
-                .async(false).payout(true)
+                .hostedPage(true)
+                .async(false).payout("true")
                 .successURL("http://www.domain.com/SuccessResponse.html").
                 productURL("http://www.domain.com/Product.html")
                 .failURL("http://www.domain.com/FailResponse.htm").
@@ -363,8 +382,6 @@ public class Application {
 
 
         final Result<TransactionResponse> generateLinkResult = link4PayGateway.paymentLink().generateLink(transactionRequest);
-
-
         if (generateLinkResult.isSuccess()) {
             TransactionResponse generateLinkPayment = generateLinkResult.getTarget();
             System.out.println("Success!: " + generateLinkPayment.response.description);

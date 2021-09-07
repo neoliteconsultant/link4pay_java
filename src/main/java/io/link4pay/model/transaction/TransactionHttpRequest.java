@@ -15,7 +15,7 @@ public class TransactionHttpRequest {
     public Summary summary;
     public List<Item> items;
     public CustomData customData;
-    public  boolean showAllCards;
+    public  String showAllCards;
 
     public static class Merchant{
         public String merchantID;
@@ -64,44 +64,22 @@ public class TransactionHttpRequest {
         public String acquirer;
     }
 
-    public class Exemptions{
-        public boolean lowValue;
-        public boolean tra;
-        public boolean trustedBeneficiary;
-        public boolean secureCorporatePayment;
-        public boolean delegatedAuthentication;
-        public boolean recurringMITExemptionSameAmount;
-        public boolean recurringMITExemptionOther;
-        public String vmid;
-    }
 
-    public static class PaymentDetail{
-        public String tokenid;
-    }
-    public static class _3DSecure{
-        public Exemptions exemptions;
-        public String challengeIndicator;
-        public String challengeWindowSize;
-    }
+
 
     public static class Transaction{
         public String txnAmount;
         public String currencyCode;
         public String txnReference;
         public boolean hostedPage;
-        public PaymentDetail paymentDetail;
         public boolean async;
         public String payout;
         public boolean isApp;
+        public PaymentDetail paymentDetail;
         @SerializedName("3DSecure")
         public _3DSecure _3DSecure;
     }
 
-    public class DynamicDescriptor{
-        public String name;
-        public String email;
-        public String mobile;
-    }
 
     public static class Url{
         public String successURL;

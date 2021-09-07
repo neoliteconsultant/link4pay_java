@@ -38,8 +38,11 @@ public class TransactionRequest extends Request {
     public boolean isApp;
     private boolean hostedPage;
     private boolean async;
-    private boolean payout;
-    private String tokenId;
+    private String payout;
+    private PaymentDetail paymentDetail;
+//    private String tokenId;
+    private DynamicDescriptor dynamicDescriptor;
+    private _3DSecure _3dSecure;
     private String paymentType;
     private String paymentMode;
     private String bankCode;
@@ -59,6 +62,7 @@ public class TransactionRequest extends Request {
     private String customData4;
     private String customData5;
     private String site;
+    public  String showAllCards;
     public List<Item> items;
     private String successURL;
     private String failURL;
@@ -66,6 +70,7 @@ public class TransactionRequest extends Request {
     private String showConfirmationPage;
     private String cartURL;
     private String productURL;
+    private String iFrame;
 
     public TransactionRequest merchantID(String merchantID) {
         this.merchantID = merchantID;
@@ -128,52 +133,52 @@ public class TransactionRequest extends Request {
         return this;
     }
 
-    public TransactionRequest shippingFirstName(String shippingFirstName){
+    public TransactionRequest shippingFirstName(String shippingFirstName) {
         this.shippingFirstName = shippingFirstName;
         return this;
     }
 
-    public TransactionRequest shippingLastName(String shippingLastName){
+    public TransactionRequest shippingLastName(String shippingLastName) {
         this.shippingLastName = shippingLastName;
         return this;
     }
 
-    public TransactionRequest shippingMobileNo(String shippingMobileNo){
+    public TransactionRequest shippingMobileNo(String shippingMobileNo) {
         this.shippingMobileNo = shippingMobileNo;
         return this;
     }
 
-    public TransactionRequest shippingEmailId(String shippingEmailId){
+    public TransactionRequest shippingEmailId(String shippingEmailId) {
         this.shippingEmailId = shippingEmailId;
         return this;
     }
 
-    public TransactionRequest shippingAddressLine1(String shippingAddressLine1){
+    public TransactionRequest shippingAddressLine1(String shippingAddressLine1) {
         this.shippingAddressLine1 = shippingAddressLine1;
         return this;
     }
 
-    public TransactionRequest shippingAddressLine2(String shippingAddressLine2){
+    public TransactionRequest shippingAddressLine2(String shippingAddressLine2) {
         this.shippingAddressLine2 = shippingAddressLine2;
         return this;
     }
 
-    public TransactionRequest shippingCity(String shippingCity){
+    public TransactionRequest shippingCity(String shippingCity) {
         this.shippingCity = shippingCity;
         return this;
     }
 
-    public TransactionRequest shippingState(String shippingState){
+    public TransactionRequest shippingState(String shippingState) {
         this.shippingState = shippingState;
         return this;
     }
 
-    public TransactionRequest shippingZip(String shippingZip){
+    public TransactionRequest shippingZip(String shippingZip) {
         this.shippingZip = shippingZip;
         return this;
     }
 
-    public TransactionRequest shippingCountry(String shippingCountry){
+    public TransactionRequest shippingCountry(String shippingCountry) {
         this.shippingCountry = shippingCountry;
         return this;
     }
@@ -193,129 +198,147 @@ public class TransactionRequest extends Request {
         return this;
     }
 
+    public TransactionRequest dynamicDescriptor(DynamicDescriptor dynamicDescriptor) {
+        this.dynamicDescriptor = dynamicDescriptor;
+        return this;
+    }
+
+    public TransactionRequest paymentDetail(PaymentDetail paymentDetail){
+        this.paymentDetail =paymentDetail;
+        return this;
+
+    }
+    public TransactionRequest _3DSecure(_3DSecure _3dSecure){
+         this._3dSecure = _3dSecure;
+        return this;
+    }
+
     public TransactionRequest hostedPage(boolean hostedPage) {
         this.hostedPage = hostedPage;
         return this;
     }
 
-    public TransactionRequest isApp(boolean isApp){
+    public TransactionRequest showAllCards(String showAllCards) {
+        this.showAllCards = showAllCards;
         return this;
     }
 
-    public TransactionRequest tokenId(String tokenId){
+    public TransactionRequest isApp(boolean isApp) {
+        this.isApp = isApp;
+        return this;
+    }
+
+    /*
+    public TransactionRequest tokenId(String tokenId) {
         this.tokenId = tokenId;
         return this;
-    }
+    }*/
 
     public TransactionRequest async(boolean async) {
-        this.async= async;
+        this.async = async;
         return this;
     }
 
-    public TransactionRequest payout(boolean payout) {
-        this.payout= payout;
+    public TransactionRequest payout(String payout) {
+        this.payout = payout;
         return this;
     }
 
 
-
-
-
-    public TransactionRequest paymentType(String paymentType){
+    public TransactionRequest paymentType(String paymentType) {
         this.paymentType = paymentType;
         return this;
     }
 
-    public TransactionRequest paymentMode(String paymentMode){
+    public TransactionRequest paymentMode(String paymentMode) {
         this.paymentMode = paymentMode;
         return this;
     }
 
-    public TransactionRequest bankCode(String bankCode){
+    public TransactionRequest bankCode(String bankCode) {
         this.bankCode = bankCode;
         return this;
     }
 
-    public TransactionRequest holder(String holder){
+    public TransactionRequest holder(String holder) {
         this.holder = holder;
         return this;
     }
 
-    public TransactionRequest bic(String bic){
+    public TransactionRequest bic(String bic) {
         this.bic = bic;
         return this;
     }
 
-    public TransactionRequest iban(String iban){
+    public TransactionRequest iban(String iban) {
         this.iban = iban;
         return this;
     }
 
-    public TransactionRequest totalValue(String totalValue){
+    public TransactionRequest totalValue(String totalValue) {
         this.totalValue = totalValue;
         return this;
     }
 
-    public TransactionRequest subtotal(String subtotal){
+    public TransactionRequest subtotal(String subtotal) {
         this.subtotal = subtotal;
         return this;
     }
 
-    public TransactionRequest tax(String tax){
+    public TransactionRequest tax(String tax) {
         this.tax = tax;
         return this;
     }
 
-    public TransactionRequest shippingCharges(String shippingCharges){
+    public TransactionRequest shippingCharges(String shippingCharges) {
         this.shippingCharges = shippingCharges;
         return this;
     }
 
-    public TransactionRequest discountValue(String discountValue){
+    public TransactionRequest discountValue(String discountValue) {
         this.discountValue = discountValue;
         return this;
     }
 
-    public TransactionRequest couponCode(String couponCode){
+    public TransactionRequest couponCode(String couponCode) {
         this.couponCode = couponCode;
         return this;
     }
 
-    public TransactionRequest couponCodeDetails(String couponCodeDetails){
+    public TransactionRequest couponCodeDetails(String couponCodeDetails) {
         this.couponCodeDetails = couponCodeDetails;
         return this;
     }
 
-    public TransactionRequest customData1(String customData1){
+    public TransactionRequest customData1(String customData1) {
         this.customData1 = customData1;
         return this;
     }
 
-    public TransactionRequest customData2(String customData2){
+    public TransactionRequest customData2(String customData2) {
         this.customData2 = customData2;
         return this;
     }
 
-    public TransactionRequest customData3(String customData3){
+    public TransactionRequest customData3(String customData3) {
         this.customData3 = customData3;
         return this;
     }
 
-    public TransactionRequest customData4(String customData4){
+    public TransactionRequest customData4(String customData4) {
         this.customData4 = customData4;
         return this;
     }
 
-    public TransactionRequest customData5(String customData5){
+    public TransactionRequest customData5(String customData5) {
         this.customData5 = customData5;
         return this;
     }
 
-    public TransactionRequest site(String site){
+    public TransactionRequest site(String site) {
         this.site = site;
         return this;
     }
-
 
 
     public TransactionRequest items(List<Item> items) {
@@ -353,6 +376,11 @@ public class TransactionRequest extends Request {
         return this;
     }
 
+    public TransactionRequest iFrame(String iFrame) {
+        this.iFrame = iFrame;
+        return this;
+    }
+
     @Override
     public String toJSON() {
 
@@ -379,39 +407,53 @@ public class TransactionRequest extends Request {
         Customer customer = new Customer();
         customer.billingAddress = billingAddress;
 
-        ShippingAddress shippingAddress = new ShippingAddress();
-        shippingAddress.sFirstName = shippingFirstName;
-        shippingAddress.sLastName= shippingLastName;
-        shippingAddress.sMobileNo = shippingMobileNo;
-        shippingAddress.sEmailId = shippingEmailId;
-        shippingAddress.sAddressLine1 = shippingAddressLine1;
-        shippingAddress.sAddressLine2 = shippingAddressLine2;
-        shippingAddress.sCity = shippingCity;
-        shippingAddress.sState = shippingState;
-        shippingAddress.sZip = shippingZip;
-        shippingAddress.sCountry = shippingCountry;
+        if (shippingAddressLine1 != null ||
+                shippingAddressLine2 != null ||
+                shippingCity != null) {
+            ShippingAddress shippingAddress = new ShippingAddress();
+            shippingAddress.sFirstName = shippingFirstName;
+            shippingAddress.sLastName = shippingLastName;
+            shippingAddress.sMobileNo = shippingMobileNo;
+            shippingAddress.sEmailId = shippingEmailId;
+            shippingAddress.sAddressLine1 = shippingAddressLine1;
+            shippingAddress.sAddressLine2 = shippingAddressLine2;
+            shippingAddress.sCity = shippingCity;
+            shippingAddress.sState = shippingState;
+            shippingAddress.sZip = shippingZip;
+            shippingAddress.sCountry = shippingCountry;
+
+            customer.shippingAddress = shippingAddress;
+        }
 
 
-
-
-        customer.shippingAddress = shippingAddress;
         transactionHttpRequest.customer = customer;
 
 
+//        PaymentDetail paymentDetail = new PaymentDetail();
+//        paymentDetail.tokenid = tokenId;
 
-        PaymentDetail paymentDetail = new PaymentDetail();
-        paymentDetail.tokenid = tokenId;
 
         Transaction transaction = new Transaction();
         transaction.txnAmount = String.valueOf(txnAmount);
         transaction.currencyCode = currencyCode;
         transaction.txnReference = txnReference;
         transaction.hostedPage = hostedPage;
-        transaction.payout = String.valueOf(payout);
-        transaction.paymentDetail =paymentDetail;
+        transaction.payout = payout;
+        if(paymentDetail!=null) {
+            transaction.paymentDetail = paymentDetail;
+        }
         transaction.async = async;
         transaction.isApp = isApp;
+        if(_3dSecure!=null){
+            transaction._3DSecure = _3dSecure;
+        }
         transactionHttpRequest.transaction = transaction;
+
+
+
+
+
+        transactionHttpRequest.dynamicDescriptor = dynamicDescriptor;
 
         Url url = new Url();
         url.successURL = successURL;
@@ -420,36 +462,50 @@ public class TransactionRequest extends Request {
         url.showConfirmationPage = showConfirmationPage;
         url.cartURL = cartURL;
         url.productURL = productURL;
+        url.iFrame = iFrame;
         transactionHttpRequest.url = url;
 
 
         transactionHttpRequest.items = items;
-        Summary summary = new Summary();
-        summary.totalValue = totalValue;
 
-        Details details = new Details();
-        details.subtotal = subtotal;
-        details.tax = tax;
-        details.shippingCharges = shippingCharges;
-        summary.details = details;
+        if (totalValue != null) {
+            Summary summary = new Summary();
+            summary.totalValue = totalValue;
 
-        Discount discount = new Discount();
-        discount.discountValue = discountValue;
-        discount.couponCode = couponCode;
-        discount.couponCodeDetails = couponCodeDetails;
-        summary.discount = discount;
+            Details details = new Details();
+            details.subtotal = subtotal;
+            details.tax = tax;
+            details.shippingCharges = shippingCharges;
+            summary.details = details;
 
-        transactionHttpRequest.summary = summary;
+            Discount discount = new Discount();
+            discount.discountValue = discountValue;
+            discount.couponCode = couponCode;
+            discount.couponCodeDetails = couponCodeDetails;
+            summary.discount = discount;
+
+            transactionHttpRequest.summary = summary;
+        }
 
         CustomData customData = new CustomData();
-        customData.customData1 = customData1;
-        customData.customData2 = customData2;
-        customData.customData3 = customData3;
-        customData.customData4 = customData4;
-        customData.customData5 = customData5;
-        customData.site = site;
+        if (customData1 != null ||
+                customData2 != null ||
+                customData3 != null ||
+                customData4 != null ||
+                customData5 != null || site != null) {
+            customData.customData1 = customData1;
+            customData.customData2 = customData2;
+            customData.customData3 = customData3;
+            customData.customData4 = customData4;
+            customData.customData5 = customData5;
+            customData.site = site;
 
-        transactionHttpRequest.customData = customData;
+            transactionHttpRequest.customData = customData;
+        }
+
+        if(showAllCards!=null) {
+            transactionHttpRequest.showAllCards = showAllCards;
+        }
 
 
         return gson.toJson(transactionHttpRequest);

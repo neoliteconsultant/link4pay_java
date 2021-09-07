@@ -3,17 +3,19 @@ package io.link4pay.model.tokenization;
 public class TokenizationHttpRequest {
     public String customerID;
     public String merchantID;
+    public String tokenID;
     public Customer customer;
     public Card card;
+    public String showAllCards;
 
-    public class BillingAddress{
+    public static  class BillingAddress{
         public String firstName;
         public String lastName;
         public String mobileNo;
         public String emailId;
     }
 
-    public class Customer{
+    public static  class Customer{
         public BillingAddress billingAddress;
     }
 

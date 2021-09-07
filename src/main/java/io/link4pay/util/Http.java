@@ -35,7 +35,6 @@ public class Http {
 
     public Link4PayResponse post(String endpoint, Request request, Map<String, String> headers) {
         Link4PayResponse link4PayResponse = new Link4PayResponse();
-        String response = null;
         try {
             URL url = new URL(endpoint);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -77,7 +76,7 @@ public class Http {
                     }
                 }
 
-                response = content.toString();
+                String response = content.toString();
                 link4PayResponse.setResponse(response);
             }
 

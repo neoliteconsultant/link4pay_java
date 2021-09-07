@@ -2,9 +2,9 @@ package io.link4pay.model.tokenization;
 
 import com.google.gson.Gson;
 import io.link4pay.model.Request;
-import io.link4pay.model.transaction.TransactionHttpRequest;
+import io.link4pay.model.tokenization.TokenizationHttpRequest;
 
-import static io.link4pay.model.transaction.TransactionHttpRequest.*;
+import static io.link4pay.model.tokenization.TokenizationHttpRequest.*;
 
 public class TokenizationRequest extends Request {
     private Gson gson = new Gson();
@@ -20,9 +20,9 @@ public class TokenizationRequest extends Request {
     private String nameOnCard;
     private String encCardNumber;
     private String encAlgorithm;
-    private double keySequenceNumber;
+    private String keySequenceNumber;
     private String acquirer;
-    private boolean showAllCards;
+    private String showAllCards;
     private String tokenID;
 
 
@@ -87,7 +87,7 @@ public class TokenizationRequest extends Request {
         return this;
     }
 
-    public TokenizationRequest keySequenceNumber(double keySequenceNumber) {
+    public TokenizationRequest keySequenceNumber(String keySequenceNumber) {
         this.keySequenceNumber = keySequenceNumber;
         return this;
     }
@@ -97,7 +97,7 @@ public class TokenizationRequest extends Request {
         return this;
     }
 
-    public TokenizationRequest showAllCards(boolean showAllCards) {
+    public TokenizationRequest showAllCards(String showAllCards) {
         this.showAllCards = showAllCards;
         return this;
     }
@@ -117,37 +117,42 @@ public class TokenizationRequest extends Request {
     @Override
     public String toJSON() {
 
-        TransactionHttpRequest transactionHttpRequest = new TransactionHttpRequest();
-        transactionHttpRequest.lang = "en";
+        TokenizationHttpRequest tokenizationHttpRequest = new TokenizationHttpRequest();
+        tokenizationHttpRequest.customerID = customerID;
+        tokenizationHttpRequest.merchantID = merchantID;
+        tokenizationHttpRequest.tokenID = tokenID;
 
-        Merchant merchant = new Merchant();
-        merchant.merchantID = merchantID;
-        merchant.customerID = customerID;
-        transactionHttpRequest.merchant = merchant;
+        if(firstName!=null||lastName!=null||mobileNo!=null||emailId!=null) {
+            BillingAddress billingAddress = new BillingAddress();
+            billingAddress.firstName = firstName;
+            billingAddress.lastName = lastName;
+            billingAddress.mobileNo = mobileNo;
+            billingAddress.emailId = emailId;
 
-        BillingAddress billingAddress = new BillingAddress();
-        billingAddress.firstName = firstName;
-        billingAddress.lastName = lastName;
-        billingAddress.mobileNo = mobileNo;
-        billingAddress.emailId = emailId;
+            Customer customer = new Customer();
+            customer.billingAddress = billingAddress;
+            tokenizationHttpRequest.customer = customer;
+        }
 
         Card card = new Card();
-        card.cardNumber = cardNumber;
-        card.expMonth = expMonth;
-        card.expYear = expYear;
-        card.nameOnCard = nameOnCard;
-        card.encCardNumber = encCardNumber;
-        card.encAlgorithm = encAlgorithm;
-        card.keySequenceNumber = String.valueOf(keySequenceNumber);
-        card.acquirer = acquirer;
-
-        Customer customer = new Customer();
-        customer.billingAddress = billingAddress;
-        transactionHttpRequest.customer = customer;
-        transactionHttpRequest.showAllCards = showAllCards;
+        if(cardNumber!=null|| expMonth!=null||expYear!=null) {
+            card.cardNumber = cardNumber;
+            card.expMonth = expMonth;
+            card.expYear = expYear;
+            card.nameOnCard = nameOnCard;
+            card.encCardNumber = encCardNumber;
+            card.encAlgorithm = encAlgorithm;
+            card.keySequenceNumber = String.valueOf(keySequenceNumber);
+            card.acquirer = acquirer;
+            tokenizationHttpRequest.card = card;
+        }
 
 
-        return gson.toJson(transactionHttpRequest);
+        if(showAllCards!=null) {
+            tokenizationHttpRequest.showAllCards = showAllCards;
+        }
+
+        return gson.toJson(tokenizationHttpRequest);
 
     }
 }
