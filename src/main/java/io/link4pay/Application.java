@@ -228,6 +228,30 @@ public class Application {
                 "the_private_key");
 
         _3DSecure _3dSecure = new _3DSecure();
+        _3dSecure.deviceFingerprint = new DeviceFingerprint( "330",
+                "24",
+                "en-GB",
+                "1080",
+                "1920",
+                 "windows",
+                "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36",
+                "false",
+                "true",
+                "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
+                "192.1.1.1");
+        _3dSecure.exemptions = new Exemptions(true, true,
+                true, true,
+                true, true,
+                true, "12345");
+        _3dSecure.externalThreeds =new ExternalThreeds(     "06",
+                 "Y",
+                "30e789c1-8293-4b2b-8b56-0776c7fff473",
+                "6388a97c-6177-4fe1-777a-7bcfda1a7f7f",
+                 "a7776e64-caa7-7ca1-ad44-aa3ee2f97eda",
+                "2.1.0",
+                 "mK225wGt2bLnnLB0Ul77777HLnU=",
+                "MDAwMDAw12345DEyMzQ2Njc4OTA=");
         _3dSecure.challengeIndicator = "01";
         _3dSecure.challengeWindowSize = "05";
 
@@ -244,6 +268,7 @@ public class Application {
                 .successURL("http://www.domain.com/SuccessResponse.html")
                 .failURL("http://www.domain.com/FailResponse.htm").
                 cancelURL("http://www.domain.com/CancelResponse.html");
+
 
         final Result<TransactionResponse> cardPayoutResult = link4PayGateway.payout().cardPayout(transactionRequest);
         if (cardPayoutResult.isSuccess()) {

@@ -21,6 +21,24 @@ public class _3DSecure {
         public String browserJavaEnabled;
         public String acceptContent;
         public String browserIP;
+
+        public DeviceFingerprint(String timezone, String browserColorDepth, String browserLanguage,
+                                 String browserScreenHeight, String browserScreenWidth, String os,
+                                 String browserAcceptHeader, String userAgent, String browserJavascriptEnabled,
+                                 String browserJavaEnabled, String acceptContent, String browserIP) {
+            this.timezone = timezone;
+            this.browserColorDepth = browserColorDepth;
+            this.browserLanguage = browserLanguage;
+            this.browserScreenHeight = browserScreenHeight;
+            this.browserScreenWidth = browserScreenWidth;
+            this.os = os;
+            this.browserAcceptHeader = browserAcceptHeader;
+            this.userAgent = userAgent;
+            this.browserJavascriptEnabled = browserJavascriptEnabled;
+            this.browserJavaEnabled = browserJavaEnabled;
+            this.acceptContent = acceptContent;
+            this.browserIP = browserIP;
+        }
     }
     public static class Exemptions{
         public boolean lowValue;
@@ -32,7 +50,9 @@ public class _3DSecure {
         public boolean recurringMITExemptionOther;
         public String vmid;
 
-        public Exemptions(boolean lowValue, boolean tra, boolean trustedBeneficiary, boolean secureCorporatePayment, boolean delegatedAuthentication, boolean recurringMITExemptionSameAmount, boolean recurringMITExemptionOther, String vmid) {
+        public Exemptions(boolean lowValue, boolean tra, boolean trustedBeneficiary,
+                          boolean secureCorporatePayment, boolean delegatedAuthentication,
+                          boolean recurringMITExemptionSameAmount, boolean recurringMITExemptionOther, String vmid) {
             this.lowValue = lowValue;
             this.tra = tra;
             this.trustedBeneficiary = trustedBeneficiary;
@@ -53,5 +73,18 @@ public class _3DSecure {
         public String threedsVersion;
         public String authenticationValue;
         public String xid;
+
+        public ExternalThreeds(String eciCode, String threedsStatus, String acsTransactionId,
+                               String dsTransactionId, String threedsServerTransactionId,
+                               String threedsVersion, String authenticationValue, String xid) {
+            this.eciCode = eciCode;
+            this.threedsStatus = threedsStatus;
+            this.acsTransactionId = acsTransactionId;
+            this.dsTransactionId = dsTransactionId;
+            this.threedsServerTransactionId = threedsServerTransactionId;
+            this.threedsVersion = threedsVersion;
+            this.authenticationValue = authenticationValue;
+            this.xid = xid;
+        }
     }
 }
