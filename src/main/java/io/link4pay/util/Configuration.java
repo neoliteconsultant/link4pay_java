@@ -13,9 +13,7 @@ public class Configuration {
     private int timeout;
     private int connectTimeout;
     private Proxy proxy;
-    private String accessToken;
-    private String clientId;
-    private String clientSecret;
+    private String apiKey;
     private String privateKey;
     private String publicKey;
     private static Logger logger;
@@ -28,9 +26,14 @@ public class Configuration {
 
 
 
-    public Configuration(Environment environment,String publicKey, String privateKey) {
+    public Configuration(Environment environment,String apiKey,String publicKey, String privateKey) {
         this.environment = environment;
 
+        if (apiKey == null || apiKey.isEmpty()) {
+            throw new ConfigurationException("apiKey needs to be set");
+        } else {
+            this.apiKey= apiKey;
+        }
 
 
         if (publicKey == null || publicKey.isEmpty()) {
@@ -46,30 +49,18 @@ public class Configuration {
         }
     }
 
-    public Configuration(String environment, String publicKey, String privateKey) {
-        this(Environment.parseEnvironment(environment),  publicKey, privateKey);
+    public Configuration(String environment, String apiKey, String publicKey, String privateKey) {
+        this(Environment.parseEnvironment(environment), apiKey, publicKey, privateKey);
     }
 
 
-
-    public Configuration(String clientId, String clientSecret) {
-        /*
-        CredentialsParser parser = new CredentialsParser(clientId, clientSecret);
-        this.environment = parser.environment;
-        this.clientId = parser.clientId;
-        this.clientSecret = parser.clientSecret;*/
-    }
-
-    public Configuration(String accessToken) {
-        /*
-        CredentialsParser parser = new CredentialsParser(accessToken);
-        this.environment = parser.environment;
-        this.merchantId = parser.merchantId;
-        this.accessToken = parser.accessToken;*/
-    }
 
     public Environment getEnvironment() {
         return environment;
+    }
+
+    public String getApiKey() {
+        return apiKey;
     }
 
     public String getPrivateKey() {
@@ -78,26 +69,6 @@ public class Configuration {
 
     public String getPublicKey() {
         return publicKey;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public String getClientSecret() {
-        return clientSecret;
-    }
-
-    public Boolean isClientCredentials() {
-        return clientId != null;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public Boolean isAccessToken() {
-        return accessToken != null;
     }
 
     public String getHostedPaymentPagePath() {

@@ -21,7 +21,7 @@ public class Application {
     }
 
     public static void payWithHPP() {
-        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox","MER00000001",
                 "the_public_key",
                 "the_private_key");
 
@@ -76,6 +76,7 @@ public class Application {
 
     public static void payWithoutHPP() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
 
@@ -119,6 +120,7 @@ public class Application {
 
     public static void capture() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
         CheckoutRequest checkoutRequest = new CheckoutRequest();
@@ -141,6 +143,7 @@ public class Application {
 
     public static void voidTransaction() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
         VoidRequest voidRequest = new VoidRequest();
@@ -164,6 +167,7 @@ public class Application {
 
     public static void refundTransaction() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
         RefundRequest refundRequest = new RefundRequest();
@@ -188,6 +192,7 @@ public class Application {
 
     public static void tokenizationPayout() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
 
@@ -224,6 +229,7 @@ public class Application {
 
     public static void cardPayout() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
 
@@ -283,6 +289,7 @@ public class Application {
 
     public static void saveCard() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
 
@@ -307,6 +314,7 @@ public class Application {
 
     public static void verifyCard() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
 
@@ -326,6 +334,7 @@ public class Application {
 
     public static void verifyToken() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
 
@@ -346,6 +355,7 @@ public class Application {
 
     public static void deleteToken() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
 
@@ -366,6 +376,7 @@ public class Application {
 
     public static void getCustomerToken() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
 
@@ -386,6 +397,7 @@ public class Application {
 
     public static void generatePaymentLink() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
 
@@ -421,6 +433,7 @@ public class Application {
      */
     public static void validateSetup() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+                "MER00000001",
                 "the_public_key",
                 "the_private_key");
 

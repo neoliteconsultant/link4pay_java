@@ -1,6 +1,7 @@
 package io.link4pay.util;
 
-import io.link4pay.exceptions.*;
+import com.google.gson.Gson;
+import io.link4pay.model.Link4PayRequest;
 import io.link4pay.model.Link4PayResponse;
 import io.link4pay.model.Request;
 import io.link4pay.security.AESEncryption;
@@ -10,20 +11,22 @@ import javax.crypto.spec.IvParameterSpec;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Base64;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Http {
     private Configuration configuration;
+    private Gson gson;
+
+    public Http() {
+        gson = new Gson();
+    }
 
     public Http(Configuration configuration) {
         this.configuration = configuration;
+        gson = new Gson();
     }
 
 
@@ -52,6 +55,7 @@ public class Http {
             final int connectionResponseCode = connection.getResponseCode();
 
             link4PayResponse.setStatusCode(connectionResponseCode);
+
             if (isErrorCode(connectionResponseCode)) {
                 link4PayResponse.setErrorMessage(connection.getResponseMessage());
 
@@ -62,8 +66,15 @@ public class Http {
                 IvParameterSpec ivParameterSpec = AESEncryption.generateIv();
 
                 String cipherText = AESEncryption.encrypt(requestJSON, key, ivParameterSpec);
+                Link4PayRequest link4PayRequest = new Link4PayRequest();
+                link4PayRequest.setLang("en");
+                link4PayRequest.setPayLoad(cipherText);
+                link4PayRequest.setApiKey(configuration.getApiKey());
+
+                final String requestPayload = gson.toJson(link4PayRequest);
+
                 try (OutputStream os = connection.getOutputStream()) {
-                    byte[] input = cipherText.getBytes("utf-8");
+                    byte[] input = requestPayload.getBytes("utf-8");
                     os.write(input, 0, input.length);
                 }
 
@@ -89,56 +100,11 @@ public class Http {
     }
 
     public String authorizationHeader() {
-        if (configuration.isAccessToken()) {
-            return "Bearer " + configuration.getAccessToken();
-        }
-        String credentials;
-        if (configuration.isClientCredentials()) {
-            credentials = configuration.getClientId() + ":" + configuration.getClientSecret();
-        } else {
-            credentials = configuration.getPublicKey() + ":" + configuration.getPrivateKey();
-        }
+        String credentials = configuration.getPublicKey() + ":" + configuration.getPrivateKey();
+
         return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
     }
 
-
-    public static void throwExceptionIfErrorStatusCode(int statusCode, String message) {
-        if (isErrorCode(statusCode)) {
-            String decodedMessage = null;
-            if (message != null) {
-                try {
-                    decodedMessage = URLDecoder.decode(message, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    Logger logger = Logger.getLogger("Link4Pay");
-                    logger.log(Level.FINEST, e.getMessage(), e.getStackTrace());
-                }
-            }
-
-            switch (statusCode) {
-                case 401:
-                    throw new AuthenticationException();
-                case 403:
-                    throw new AuthorizationException(decodedMessage);
-                case 404:
-                    throw new NotFoundException();
-                case 408:
-                    throw new RequestTimeoutException();
-                case 426:
-                    throw new UpgradeRequiredException();
-                case 429:
-                    throw new TooManyRequestsException();
-                case 500:
-                    throw new ServerException();
-                case 503:
-                    throw new ServiceUnavailableException();
-                case 504:
-                    throw new GatewayTimeoutException();
-                default:
-                    throw new UnexpectedException("Unexpected HTTP_RESPONSE " + statusCode);
-
-            }
-        }
-    }
 
     private static boolean isErrorCode(int responseCode) {
         return responseCode != 200 && responseCode != 201 && responseCode != 422;
