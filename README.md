@@ -35,7 +35,7 @@ import java.util.List;
 
 public class Application {
     public static void main(String[] args) {
-        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox", "the_api_key",
                         "the_public_key",
                         "the_private_key");
         
