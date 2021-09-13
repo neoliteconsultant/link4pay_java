@@ -15,10 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class Application {
     public static void main(String[] args) {
         saveCard();
     }
+
+
+
 
     public static void payWithHPP() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox","MER00000001",
@@ -289,7 +293,7 @@ public class Application {
 
     public static void saveCard() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
-                "MER00000001",
+                "DEV20210811001",
                 "the_public_key",
                 "the_private_key");
 

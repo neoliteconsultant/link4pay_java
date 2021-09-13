@@ -40,8 +40,9 @@ public class Http {
         Link4PayResponse link4PayResponse = new Link4PayResponse();
         try {
             URL url = new URL(endpoint);
+            System.out.println("======== HTTP ENDPOINT ==================");
+            System.out.println(endpoint);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
             connection.addRequestProperty("Authorization", authorizationHeader());
             if (headers != null) {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -50,34 +51,36 @@ public class Http {
             }
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; utf-8");
+            connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
 
+            final String requestJSON = request.toJSON();
+            SecretKey key = AESEncryption.generateKey(128);
+            IvParameterSpec ivParameterSpec = AESEncryption.generateIv();
+
+            String cipherText = AESEncryption.encrypt(requestJSON, key, ivParameterSpec);
+            Link4PayRequest link4PayRequest = new Link4PayRequest();
+            link4PayRequest.setLang("en");
+            link4PayRequest.setPayLoad(cipherText);
+            link4PayRequest.setApiKey(configuration.getApiKey());
+
+            final String requestPayload = gson.toJson(link4PayRequest);
+            System.out.println("======== HTTP REQUEST ==================");
+            System.out.println(requestPayload);
+
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = requestPayload.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
             final int connectionResponseCode = connection.getResponseCode();
-
             link4PayResponse.setStatusCode(connectionResponseCode);
-
             if (isErrorCode(connectionResponseCode)) {
+                System.out.println("======== ERROR MESSAGE ==================");
+                System.out.println(connection.getResponseMessage());
                 link4PayResponse.setErrorMessage(connection.getResponseMessage());
 
-
             } else {
-                final String requestJSON = request.toJSON();
-                SecretKey key = AESEncryption.generateKey(128);
-                IvParameterSpec ivParameterSpec = AESEncryption.generateIv();
-
-                String cipherText = AESEncryption.encrypt(requestJSON, key, ivParameterSpec);
-                Link4PayRequest link4PayRequest = new Link4PayRequest();
-                link4PayRequest.setLang("en");
-                link4PayRequest.setPayLoad(cipherText);
-                link4PayRequest.setApiKey(configuration.getApiKey());
-
-                final String requestPayload = gson.toJson(link4PayRequest);
-
-                try (OutputStream os = connection.getOutputStream()) {
-                    byte[] input = requestPayload.getBytes("utf-8");
-                    os.write(input, 0, input.length);
-                }
-
                 StringBuffer content = new StringBuffer();
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                     String inputLine;
@@ -87,7 +90,9 @@ public class Http {
                     }
                 }
 
+                System.out.println("======== HTTP RESPONSE ==================");
                 String response = content.toString();
+                System.out.println(response);
                 link4PayResponse.setResponse(response);
             }
 
