@@ -59,6 +59,10 @@ public class Configuration {
         return environment;
     }
 
+    public String getAccessToken(){
+        return "WutIZC01Vo3UfkIt5OGMGWvy5AyOhLOB";
+    }
+
     public String getApiKey() {
         return apiKey;
     }

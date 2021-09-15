@@ -35,9 +35,9 @@ public class Link4PayGateway {
      * @param apiKey
      *            the API key provided by Link4Pay.
      * @param publicKey
-     *            the public key provided by Link4Pay.
+     *            absolute path to public key provided by Link4Pay.
      * @param privateKey
-     *            the private key provided by Link4Pay.
+     *            absolute path to private key provided by Link4Pay.
      */
 
     public Link4PayGateway(String environment, String apiKey, String publicKey, String privateKey) {

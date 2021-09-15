@@ -68,11 +68,11 @@ public class AESEncryption {
         Cipher cipher = Cipher.getInstance(algorithm);
         cipher.init(Cipher.ENCRYPT_MODE, key, iv);
         byte[] cipherText = cipher.doFinal(input.getBytes());
-//        return Base64.getEncoder()
-//                .encodeToString(cipherText);
+        return Base64.getEncoder()
+                .encodeToString(cipherText);
 
-        return bytesToHex(Base64.getEncoder()
-               .encodeToString(cipherText).getBytes());
+//        return bytesToHex(Base64.getEncoder()
+//               .encodeToString(cipherText).getBytes());
     }
 
 
@@ -112,6 +112,7 @@ public class AESEncryption {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(n);
         SecretKey key = keyGenerator.generateKey();
+
         return key;
     }
 

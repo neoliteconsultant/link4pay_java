@@ -36,8 +36,8 @@ import java.util.List;
 public class Application {
     public static void main(String[] args) {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox", "the_api_key",
-                        "the_public_key",
-                        "the_private_key");
+                        "public_key_absolute_path",
+                        "private_key_absolute_path");
         
                 List<Item> items = new ArrayList<>();
                 items.add(new Item("RBK fitness shoes", "ITM001", "2.49", "2"));

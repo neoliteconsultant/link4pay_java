@@ -4,11 +4,16 @@ import com.google.gson.Gson;
 import io.link4pay.model.Link4PayRequest;
 import io.link4pay.model.Link4PayResponse;
 import io.link4pay.model.Request;
+import io.link4pay.model.transaction.TransactionResponse;
 import io.link4pay.security.AESEncryption;
-
+import io.link4pay.security.Certificate;
+import io.link4pay.security.ConversionUtil;
+import io.link4pay.security.DataEncryption;
+import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -55,8 +60,16 @@ public class Http {
             connection.setDoOutput(true);
 
             final String requestJSON = request.toJSON();
-            SecretKey key = AESEncryption.generateKey(128);
             IvParameterSpec ivParameterSpec = AESEncryption.generateIv();
+
+            Certificate certificate = new Certificate(new FileInputStream(configuration.getPublicKey()),
+                    new FileInputStream(configuration.getPrivateKey()));
+
+            final String fingerprint = certificate.getThumbPrint();
+            final String aesKey = fingerprint+configuration.getAccessToken();
+
+            SecretKey key = ConversionUtil.getKeyFromPassword(aesKey, "@$#baelDunG@#^$*");
+
 
             String cipherText = AESEncryption.encrypt(requestJSON, key, ivParameterSpec);
             Link4PayRequest link4PayRequest = new Link4PayRequest();
@@ -67,7 +80,11 @@ public class Http {
             final String requestPayload = gson.toJson(link4PayRequest);
             System.out.println("======== HTTP REQUEST ==================");
             System.out.println(requestPayload);
+            System.out.println("======== HTTP REQUEST LENGTH ==================");
+            System.out.println(cipherText.length());
 
+            System.out.println("======== DECRYPT ==================");
+            System.out.println(AESEncryption.decrypt(cipherText,key,ivParameterSpec));
             try (OutputStream os = connection.getOutputStream()) {
                 byte[] input = requestPayload.getBytes("utf-8");
                 os.write(input, 0, input.length);
@@ -77,8 +94,28 @@ public class Http {
             link4PayResponse.setStatusCode(connectionResponseCode);
             if (isErrorCode(connectionResponseCode)) {
                 System.out.println("======== ERROR MESSAGE ==================");
-                System.out.println(connection.getResponseMessage());
                 link4PayResponse.setErrorMessage(connection.getResponseMessage());
+
+                /*
+
+                StringBuffer content = new StringBuffer();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                    String inputLine;
+
+                    while ((inputLine = in.readLine()) != null) {
+                        content.append(inputLine);
+                    }
+                }
+
+                String response = content.toString();
+                System.out.println(response);
+                final TransactionResponse transactionResponse = gson.fromJson(response, TransactionResponse.class);
+
+                link4PayResponse.setStatusCode(transactionResponse.response.responseCode);
+                link4PayResponse.setErrorMessage(transactionResponse.response.description);
+
+                System.out.println("=="+transactionResponse.response.description);
+                */
 
             } else {
                 StringBuffer content = new StringBuffer();
@@ -97,7 +134,7 @@ public class Http {
             }
 
         } catch (Exception ex) {
-            //ioe.printStackTrace();
+            ex.printStackTrace();
             ex.getMessage();
         }
 
