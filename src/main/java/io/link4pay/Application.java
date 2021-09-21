@@ -35,52 +35,6 @@ public class Application {
 
 
 
-    private static void encrypt2() {
-        try {
-
-            Certificate certificate = new Certificate(new FileInputStream(publicKey),
-                    new FileInputStream(privateKey));
-            final String requestJSON = "Link4Pay";
-            final String fingerprint = certificate.getThumbPrint();
-            final String aesKey = fingerprint+"WutIZC01Vo3UfkIt5OGMGWvy5AyOhLOB";
-            SecretKey key = ConversionUtil.getKeyFromPassword(aesKey, "@$#baelDunG@#^$*");
-            IvParameterSpec ivParameterSpec = AESEncryption.generateIv();
-
-            String cipherText = AESEncryption.encrypt(requestJSON, key, ivParameterSpec);
-
-            System.out.println(cipherText);
-            System.out.println("======== DECRYPT ==================");
-            System.out.println(AESEncryption.decrypt(cipherText, key, ivParameterSpec));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            ex.getMessage();
-        }
-    }
-
-    private static void encrypt3() {
-        try {
-            Certificate certificate = new Certificate(new FileInputStream(publicKey),
-                    new FileInputStream(privateKey));
-
-            final String requestJSON = "You don't need another body";
-            String key = certificate.getThumbPrint()+"WutIZC01Vo3UfkIt5OGMGWvy5AyOhLOB";
-            System.out.println(key.length());
-            IvParameterSpec ivParameterSpec = AESEncryption.generateIv();
-            SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), "AES");
-
-            String cipherText = DataEncryption.encryptAES(requestJSON, key.getBytes(), ivParameterSpec.getIV());
-
-            //String cipherText = AESEncryption.encrypt(requestJSON, key, ivParameterSpec);
-            //String cipherText = "Q5UD8Q/AevuQxAPHvbvYoQ==";
-            System.out.println(cipherText);
-            System.out.println("======== DECRYPT ==================");
-            System.out.println(DataEncryption.decrypt(cipherText, key));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            ex.getMessage();
-        }
-    }
-
     public static void payWithHPP() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox", "MER00000001",
                 publicKey,
@@ -88,7 +42,7 @@ public class Application {
 
         List<Item> items = new ArrayList<>();
         items.add(new Item("RBK fitness shoes", "ITM001", "2.49", "2"));
-        items.add(new Item(" Nike DriFit T-shirt", "ITM002", "1.99", "1"));
+        items.add(new Item("Nike DriFit T-shirt", "ITM002", "1.99", "1"));
 
         _3DSecure _3dSecure = new _3DSecure();
         _3dSecure.challengeIndicator = "01";
