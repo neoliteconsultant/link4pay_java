@@ -44,7 +44,7 @@ public class PaymentService {
     public Result<HostedPayment> makePayment(TransactionRequest transactionRequest){
         Map<String, String> headers = new HashMap<>();
         headers.put("apiType","paymentWithoutHpp");
-        Link4PayResponse result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", transactionRequest);
+        Link4PayResponse result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", transactionRequest, headers);
         return new Result<>(result, HostedPayment.class);
 
     }
@@ -57,7 +57,9 @@ public class PaymentService {
      * @return {@link Result}
      */
     public Result<TransactionResponse> capture(CheckoutRequest checkoutRequest){
-        Link4PayResponse result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", checkoutRequest);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("apiType","capture");
+        Link4PayResponse result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", checkoutRequest, headers);
         return new Result<>(result, TransactionResponse.class);
 
     }
@@ -69,7 +71,9 @@ public class PaymentService {
      * @return {@link Result}
      */
     public Result<TransactionResponse> voidTransaction(VoidRequest voidRequest){
-        Link4PayResponse result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", voidRequest);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("apiType","void");
+        Link4PayResponse result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", voidRequest, headers);
         return new Result<>(result, TransactionResponse.class);
 
     }
@@ -84,7 +88,7 @@ public class PaymentService {
     public Result<TransactionResponse>  refundTransaction(RefundRequest refundRequest){
         Map<String, String> headers = new HashMap<>();
         headers.put("apiType","refund");
-        Link4PayResponse result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", refundRequest);
+        Link4PayResponse result = http.post(configuration.getWithoutHostedPaymentPagePath()+"/api/cardpayments", refundRequest, headers);
         return new Result<>(result, TransactionResponse.class);
 
     }

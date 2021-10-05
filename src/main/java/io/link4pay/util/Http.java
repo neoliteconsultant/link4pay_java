@@ -47,6 +47,8 @@ public class Http {
             if (headers != null) {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     connection.addRequestProperty(entry.getKey(), entry.getValue());
+
+                    //System.out.println(entry.getKey()+":"+entry.getValue());
                 }
             }
             connection.setRequestMethod("POST");

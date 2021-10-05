@@ -24,19 +24,19 @@ public class Application {
             privateKey);
     public static void main(String[] args) {
         Application application = new Application();
-        //application.saveCard();
-        application.payWithHPP();
-        //application.payWithoutHPP();
-        //application.capture();
+        application.saveCard();
+        //application.payWithHPP();
+      // application.payWithoutHPP();
+      //application.capture();
         //application.voidTransaction();
         //application.refundTransaction();
-//       application.tokenizationPayout();
-   //     application.cardPayout();
-//        application.verifyCard();
-//        application.verifyToken();
-//        application.deleteToken();
+       //application.tokenizationPayout();
+       // application.cardPayout();
+       // application.verifyCard();
+       // application.verifyToken();
+     //  application.deleteToken();
 //        application.getCustomerToken();
-//        application.generatePaymentLink();
+     //   application.generatePaymentLink();
 //        application.validateSetup();
     }
 
@@ -61,10 +61,12 @@ public class Application {
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.merchantID("MER09821725")
                 .customerID("CUS77743201").firstName("Joe")
-                .lastName("Test").emailId("test@test.test").addressLine1("NYC")
-                .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
+                .lastName("Test").emailId("test@test.test").
+                mobileNo("3123456789").addressLine1("abc")
+                .addressLine2("abc").city("abc").country("CY").state("abc").zip("AR12345")
                 .shippingFirstName("Joe")
-                .shippingLastName("Test").shippingEmailId("test@test.test").shippingAddressLine1("NYC")
+                .shippingLastName("Test").shippingMobileNo("3123456789").
+                shippingEmailId("test@test.test").shippingAddressLine1("NYC")
                 .shippingAddressLine2("NYC").shippingCity("NYC").shippingCountry("US").shippingState("NYC").
                 shippingZip("20912")
                 .currencyCode("USD").txnAmount(8.99).txnReference("REF0013tt22112")
@@ -83,6 +85,8 @@ public class Application {
                 customData4("item").customData5("item")
                 .site("https://link4pay.com");
 
+
+        //System.out.println(transactionRequest.toJSON());
 
         final Result<HostedPayment> hostedPaymentResult = link4PayGateway.paymentService().payWithHPP(transactionRequest);
         if (hostedPaymentResult.isSuccess()) {
@@ -104,9 +108,9 @@ public class Application {
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.merchantID("MER09821725")
                 .customerID("CUS77743201").firstName("Joe")
-                .lastName("Test").emailId("test@test.test").addressLine1("NYC")
+                .lastName("Test").mobileNo("3123456789").emailId("test@test.test").addressLine1("NYC")
                 .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
-                .currencyCode("USD").txnAmount(8.99).txnReference("REF0013tt22112")
+                .currencyCode("USD").txnAmount(8.99).txnReference("REF0013zz228771")
                 ._3DSecure(_3dSecure)
                 .isApp(true)
                 .paymentType("Sale").paymentMode("IDEAL").bankCode("ING")
@@ -206,7 +210,7 @@ public class Application {
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.merchantID("MER09821725")
                 .customerID("CUS77743201").firstName("Joe")
-                .lastName("Test").emailId("test@test.test").addressLine1("NYC")
+                .lastName("Test").mobileNo("3123456789").emailId("test@test.test").addressLine1("NYC")
                 .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
                 .shippingFirstName("Joe")
                 .shippingLastName("Test").shippingEmailId("test@test.test").shippingAddressLine1("NYC")
@@ -272,7 +276,7 @@ public class Application {
                 mobileNo("31-232567456").
                 addressLine1("NYC")
                 .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
-                .currencyCode("USD").txnAmount(8.99).txnReference("REF00136799112")
+                .currencyCode("USD").txnAmount(8.99).txnReference("REF0013610kki")
                 .hostedPage(true).paymentDetail(new PaymentDetail("476173-994987418383314681-0200"))
                 .async(false).payout("true")
                 ._3DSecure(_3dSecure)
@@ -406,7 +410,7 @@ public class Application {
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.merchantID("MER09821725")
                 .customerID("CUS77743201").firstName("Joe")
-                .lastName("Test").emailId("test@test.test").addressLine1("NYC")
+                .lastName("Test").mobileNo("3123456789").emailId("test@test.test").addressLine1("NYC")
                 .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
                 .currencyCode("USD").txnAmount(8.99).txnReference("REF0013tt22112")
                 .hostedPage(true)
