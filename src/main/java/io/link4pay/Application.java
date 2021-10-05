@@ -1,36 +1,26 @@
 package io.link4pay;
 
-import io.link4pay.model.Link4PayRequest;
 import io.link4pay.model.Result;
-import io.link4pay.model.transaction.*;
 import io.link4pay.model.checkout.CheckoutRequest;
 import io.link4pay.model.management.ManagementRequest;
 import io.link4pay.model.payment.HostedPayment;
 import io.link4pay.model.refund.RefundRequest;
 import io.link4pay.model.tokenization.TokenizationRequest;
+import io.link4pay.model.transaction.*;
 import io.link4pay.model.void_transaction.VoidRequest;
-import io.link4pay.security.AESEncryption;
-import io.link4pay.security.Certificate;
-import io.link4pay.security.ConversionUtil;
-import io.link4pay.security.DataEncryption;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
-import static io.link4pay.model.transaction._3DSecure.*;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static io.link4pay.model.transaction._3DSecure.*;
 
 
 public class Application {
     private final static String publicKey="/Users/tonym/Desktop/Freelancing/Projects/Link4Pay/certs/DEV20210811001-crt.pem";
     private final static String privateKey ="/Users/tonym/Desktop/Freelancing/Projects/Link4Pay/certs/DEV20210811001-key.pem";
     public static void main(String[] args) {
-        saveCard();
+        //saveCard();
+        payWithHPP();
     }
 
 

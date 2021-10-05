@@ -4,14 +4,9 @@ import com.google.gson.Gson;
 import io.link4pay.model.Link4PayRequest;
 import io.link4pay.model.Link4PayResponse;
 import io.link4pay.model.Request;
-import io.link4pay.model.transaction.TransactionResponse;
-import io.link4pay.security.AESEncryption;
-import io.link4pay.security.Certificate;
-import io.link4pay.security.ConversionUtil;
-import io.link4pay.security.DataEncryption;
-import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
+import io.link4pay.security.encryption.Certificate;
+import io.link4pay.security.encryption.DataEncryption;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -60,18 +55,24 @@ public class Http {
             connection.setDoOutput(true);
 
             final String requestJSON = request.toJSON();
-            IvParameterSpec ivParameterSpec = AESEncryption.generateIv();
 
             Certificate certificate = new Certificate(new FileInputStream(configuration.getPublicKey()),
                     new FileInputStream(configuration.getPrivateKey()));
+            certificate.getCertificateDetails();
 
             final String fingerprint = certificate.getThumbPrint();
-            final String aesKey = fingerprint+configuration.getAccessToken();
+            final byte[] thumbBytes = fingerprint.getBytes();
+            final int thumbLength = thumbBytes.length;
 
-            SecretKey key = ConversionUtil.getKeyFromPassword(aesKey, "@$#baelDunG@#^$*");
+            final String accessToken= configuration.getAccessToken();
+            final byte[] accessTokenBytes = accessToken.getBytes();
+            final StringBuilder key = new StringBuilder();
+            for (int i = 0; i < accessToken.length(); ++i) {
+                key.append((char)(accessTokenBytes[i] | thumbBytes[i % thumbLength]));
+            }
 
-
-            String cipherText = AESEncryption.encrypt(requestJSON, key, ivParameterSpec);
+            DataEncryption dataEncryption = new DataEncryption();
+            String cipherText = dataEncryption.encryptText(requestJSON, key.toString());
             Link4PayRequest link4PayRequest = new Link4PayRequest();
             link4PayRequest.setLang("en");
             link4PayRequest.setPayLoad(cipherText);
@@ -80,11 +81,7 @@ public class Http {
             final String requestPayload = gson.toJson(link4PayRequest);
             System.out.println("======== HTTP REQUEST ==================");
             System.out.println(requestPayload);
-            System.out.println("======== HTTP REQUEST LENGTH ==================");
-            System.out.println(cipherText.length());
 
-            System.out.println("======== DECRYPT ==================");
-            System.out.println(AESEncryption.decrypt(cipherText,key,ivParameterSpec));
             try (OutputStream os = connection.getOutputStream()) {
                 byte[] input = requestPayload.getBytes("utf-8");
                 os.write(input, 0, input.length);
@@ -96,26 +93,7 @@ public class Http {
                 System.out.println("======== ERROR MESSAGE ==================");
                 link4PayResponse.setErrorMessage(connection.getResponseMessage());
 
-                /*
 
-                StringBuffer content = new StringBuffer();
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                    String inputLine;
-
-                    while ((inputLine = in.readLine()) != null) {
-                        content.append(inputLine);
-                    }
-                }
-
-                String response = content.toString();
-                System.out.println(response);
-                final TransactionResponse transactionResponse = gson.fromJson(response, TransactionResponse.class);
-
-                link4PayResponse.setStatusCode(transactionResponse.response.responseCode);
-                link4PayResponse.setErrorMessage(transactionResponse.response.description);
-
-                System.out.println("=="+transactionResponse.response.description);
-                */
 
             } else {
                 StringBuffer content = new StringBuffer();

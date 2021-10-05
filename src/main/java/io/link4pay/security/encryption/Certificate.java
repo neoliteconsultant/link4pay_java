@@ -1,10 +1,10 @@
 
 
-package io.link4pay.security;
+package io.link4pay.security.encryption;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
+import java.security.Provider;
 import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;

@@ -1,7 +1,13 @@
-package io.link4pay.security;
 
+
+package io.link4pay.security.encryption;
+
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.io.IOException;
+
+
+import java.security.Key;
 import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 import java.util.Random;
@@ -54,34 +60,6 @@ public class DataEncryption
             decrypted = DataEncryption.cipher.doFinal(encryptedBytes);
         }
         catch (Exception e) {
-            e.printStackTrace();
-            DataEncryption.log.severe(e.getMessage());
-            throw new IOException("[decrypt] " + e.getMessage());
-        }
-        return decrypted;
-    }
-
-    public static byte[] decrypt2(final String code, SecretKeySpec key) throws IOException {
-        byte[] decrypted;
-        try {
-            final byte[] encryptedText = hexToBytes(code);
-            if (encryptedText.length == 0) {
-                throw new IOException("[decrypt] Incorrect Values");
-            }
-            final byte[] iv = new byte[DataEncryption.cipher.getBlockSize()];
-            System.arraycopy(encryptedText, 0, iv, 0, iv.length);
-            final IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-            if (code != null && code.isEmpty()) {
-                throw new IOException("Empty string");
-            }
-            final int encryptedSize = encryptedText.length - DataEncryption.cipher.getBlockSize();
-            final byte[] encryptedBytes = new byte[encryptedSize];
-            System.arraycopy(encryptedText, DataEncryption.cipher.getBlockSize(), encryptedBytes, 0, encryptedSize);
-            //final SecretKeySpec key = new SecretKeySpec(keyData.getBytes(), "AES");
-            DataEncryption.cipher.init(2, key, ivParameterSpec);
-            decrypted = DataEncryption.cipher.doFinal(encryptedBytes);
-        }
-        catch (Exception e) {
             DataEncryption.log.severe(e.getMessage());
             throw new IOException("[decrypt] " + e.getMessage());
         }
@@ -128,7 +106,7 @@ public class DataEncryption
         return buffer;
     }
     
-    public String encryptText(final String input, final String password) throws Exception {
+    public String encryptText(final String input, final String password) throws Exception{
         final byte[] passwordBytes = password.getBytes(StandardCharsets.UTF_8);
         return this.encryptBytes(input, passwordBytes);
     }
@@ -163,6 +141,12 @@ public class DataEncryption
         random = new Random();
         try {
             DataEncryption.cipher = Cipher.getInstance("AES/CBC/NoPadding");
+//            final Field field = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
+//            field.setAccessible(true);
+//            final Field modifiersField = Field.class.getDeclaredField("modifiers");
+//            modifiersField.setAccessible(true);
+//            modifiersField.setInt(field, field.getModifiers() & 0xFFFFFFEF);
+//            field.set(null, false);
         }
         catch (Exception e) {
             DataEncryption.log.severe(e.getMessage());
