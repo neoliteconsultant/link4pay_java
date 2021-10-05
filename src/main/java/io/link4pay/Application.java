@@ -16,19 +16,34 @@ import static io.link4pay.model.transaction._3DSecure.*;
 
 
 public class Application {
-    private final static String publicKey="/Users/tonym/Desktop/Freelancing/Projects/Link4Pay/certs/DEV20210811001-crt.pem";
-    private final static String privateKey ="/Users/tonym/Desktop/Freelancing/Projects/Link4Pay/certs/DEV20210811001-key.pem";
+    private final String publicKey="/Users/tonym/Desktop/Freelancing/Projects/Link4Pay/certs/DEV20210811001-crt.pem";
+    private final  String privateKey ="/Users/tonym/Desktop/Freelancing/Projects/Link4Pay/certs/DEV20210811001-key.pem";
+    private final Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
+            "DEV20210811001",
+            publicKey,
+            privateKey);
     public static void main(String[] args) {
-        //saveCard();
-        payWithHPP();
+        Application application = new Application();
+        //application.saveCard();
+        application.payWithHPP();
+        //application.payWithoutHPP();
+        //application.capture();
+        //application.voidTransaction();
+        //application.refundTransaction();
+//       application.tokenizationPayout();
+   //     application.cardPayout();
+//        application.verifyCard();
+//        application.verifyToken();
+//        application.deleteToken();
+//        application.getCustomerToken();
+//        application.generatePaymentLink();
+//        application.validateSetup();
     }
 
 
 
-    public static void payWithHPP() {
-        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox", "MER00000001",
-                publicKey,
-                privateKey);
+    public void payWithHPP() {
+
 
         List<Item> items = new ArrayList<>();
         items.add(new Item("RBK fitness shoes", "ITM001", "2.49", "2"));
@@ -79,11 +94,8 @@ public class Application {
         }
     }
 
-    public static void payWithoutHPP() {
-        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
-                "MER00000001",
-                publicKey,
-                privateKey);
+    public  void payWithoutHPP() {
+
 
         _3DSecure _3dSecure = new _3DSecure();
         _3dSecure.challengeIndicator = "01";
@@ -123,11 +135,8 @@ public class Application {
         }
     }
 
-    public static void capture() {
-        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
-                "MER00000001",
-                publicKey,
-                privateKey);
+    public void capture() {
+
         CheckoutRequest checkoutRequest = new CheckoutRequest();
         checkoutRequest.merchantID("MER09821725").txnReference("REF0013tt22112")
                 .name("COMPANY NAME LTD").email("joedoe@example.com")
@@ -146,11 +155,8 @@ public class Application {
         }
     }
 
-    public static void voidTransaction() {
-        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
-                "MER00000001",
-                publicKey,
-                privateKey);
+    public  void voidTransaction() {
+
         VoidRequest voidRequest = new VoidRequest();
         voidRequest.merchantID("MER09821725").txnReference("REF0013tt22112")
                 .name("COMPANY NAME LTD").email("joedoe@example.com")
@@ -170,7 +176,7 @@ public class Application {
         }
     }
 
-    public static void refundTransaction() {
+    public void refundTransaction() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
                 "MER00000001",
                 publicKey,
@@ -195,11 +201,7 @@ public class Application {
         }
     }
 
-    public static void tokenizationPayout() {
-        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
-                "MER00000001",
-                publicKey,
-                privateKey);
+    public  void tokenizationPayout() {
 
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.merchantID("MER09821725")
@@ -232,11 +234,8 @@ public class Application {
         }
     }
 
-    public static void cardPayout() {
-        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
-                "MER00000001",
-                publicKey,
-                privateKey);
+    public void cardPayout() {
+
 
         _3DSecure _3dSecure = new _3DSecure();
         _3dSecure.deviceFingerprint = new DeviceFingerprint("330",
@@ -269,9 +268,11 @@ public class Application {
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.merchantID("MER09821725")
                 .customerID("CUS77743201").firstName("Joe")
-                .lastName("Test").emailId("test@test.test").addressLine1("NYC")
+                .lastName("Test").emailId("test@test.test").
+                mobileNo("31-232567456").
+                addressLine1("NYC")
                 .addressLine2("NYC").city("NYC").country("US").state("NYC").zip("20912")
-                .currencyCode("USD").txnAmount(8.99).txnReference("REF0013tt22112")
+                .currencyCode("USD").txnAmount(8.99).txnReference("REF00136799112")
                 .hostedPage(true).paymentDetail(new PaymentDetail("476173-994987418383314681-0200"))
                 .async(false).payout("true")
                 ._3DSecure(_3dSecure)
@@ -284,7 +285,9 @@ public class Application {
         final Result<TransactionResponse> cardPayoutResult = link4PayGateway.payout().cardPayout(transactionRequest);
         if (cardPayoutResult.isSuccess()) {
             TransactionResponse hostedPayment = cardPayoutResult.getTarget();
-            System.out.println("Success!: " + hostedPayment.response.description);
+            if(hostedPayment.response!=null) {
+                System.out.println("Success!: " + hostedPayment.response.description);
+            }
         } else {
             System.out.println("Status Code !: " + cardPayoutResult.getStatusCode());
             System.out.println("Error!: " + cardPayoutResult.getMessage());
@@ -292,11 +295,8 @@ public class Application {
     }
 
 
-    public static void saveCard() {
-        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
-                "DEV20210811001",
-                publicKey,
-                privateKey);
+    public  void saveCard() {
+
 
         TokenizationRequest tokenizationRequest = new TokenizationRequest();
         tokenizationRequest.merchantID("MER09821725")
@@ -317,11 +317,8 @@ public class Application {
         }
     }
 
-    public static void verifyCard() {
-        Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
-                "MER00000001",
-                publicKey,
-                privateKey);
+    public void verifyCard() {
+
 
         TokenizationRequest tokenizationRequest = new TokenizationRequest();
         tokenizationRequest.merchantID("MER09821725")
@@ -337,7 +334,7 @@ public class Application {
         }
     }
 
-    public static void verifyToken() {
+    public  void verifyToken() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
                 "MER00000001",
                 publicKey,
@@ -358,7 +355,7 @@ public class Application {
         }
     }
 
-    public static void deleteToken() {
+    public void deleteToken() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
                 "MER00000001",
                 publicKey,
@@ -379,7 +376,7 @@ public class Application {
         }
     }
 
-    public static void getCustomerToken() {
+    public  void getCustomerToken() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
                 "MER00000001",
                 publicKey,
@@ -400,7 +397,7 @@ public class Application {
         }
     }
 
-    public static void generatePaymentLink() {
+    public  void generatePaymentLink() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
                 "MER00000001",
                 publicKey,
@@ -436,7 +433,7 @@ public class Application {
     /**
      *
      */
-    public static void validateSetup() {
+    public void validateSetup() {
         Link4PayGateway link4PayGateway = new Link4PayGateway("sandbox",
                 "MER00000001",
                 publicKey,

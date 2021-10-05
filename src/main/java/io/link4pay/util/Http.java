@@ -88,6 +88,7 @@ public class Http {
             }
 
             final int connectionResponseCode = connection.getResponseCode();
+            System.out.println("Response Code " +connectionResponseCode);
             link4PayResponse.setStatusCode(connectionResponseCode);
             if (isErrorCode(connectionResponseCode)) {
                 System.out.println("======== ERROR MESSAGE ==================");
